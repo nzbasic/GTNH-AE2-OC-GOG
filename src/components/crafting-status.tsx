@@ -38,13 +38,11 @@ export default function CraftingStatus() {
         }
     }, []);
 
-    console.log(cpus);
-
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             {!cpus.length && <div>Loading...</div>}
             {cpus.map(cpu => (
-                <Card className={cn('flex flex-col gap-1 rounded-sm shadow-sm p-2 text-xs', { 'bg-green-100 border-green-300': cpu.busy })} key={cpu.id}>
+                <Card className={cn('flex flex-col gap-1 rounded-sm shadow-sm p-2 text-xs', { 'bg-green-100 dark:bg-green-900 border-green-300': cpu.busy })} key={cpu.id}>
                     <p className="italic">{cpu.name === '' ? 'Unnamed' : cpu.name} {!cpu.busy && '(idle)'}</p>
                     {cpu.final_output ? (
                         <p>{cpu.final_output.item_name} x{cpu.final_output.quantity}</p>
