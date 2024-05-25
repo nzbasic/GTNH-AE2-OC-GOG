@@ -1,3 +1,5 @@
+[Credit to Niels for most of the OC code](https://github.com/Niels1006/OC-AE2-integration) (i'll put my code here when I figure out how to get it out of OC :trollface:)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
