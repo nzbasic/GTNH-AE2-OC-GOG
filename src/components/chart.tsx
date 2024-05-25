@@ -12,8 +12,8 @@ export default function LineChartHero<T>({ data, name, size }: Props<T>) {
     const min = Math.min(...data.map((d: any) => d[name]));
     const max = Math.max(...data.map((d: any) => d[name]));
 
-    const minWithMargin = min - (max - min) * 5;
-    const maxWithMargin = max + (max - min) * 5;
+    const minWithMargin = min - ((min * 10) / 100);
+    const maxWithMargin = max + ((max * 10) / 100);
 
     return (
         <LineChart
