@@ -12,6 +12,7 @@ import {
 import { CPURow, ParsedCPURow } from "@/types/supabase";
 import React from "react";
 import Link from "next/link";
+import { formatName } from "@/util/ae2";
 
 type Props = {
     cpu: ParsedCPURow;
@@ -40,7 +41,7 @@ export default function CPU({ cpu }: Props) {
         >
             <p >CPU {cpu.name === '' ? 'Unnamed' : cpu.name} {!cpu.busy && '(idle)'}</p>
             {cpu.final_output ? (
-                <p className="italic">{cpu.final_output.item_name} x{cpu.final_output.quantity}</p>
+                <p className="italic">{formatName(cpu.final_output.item_name)} x{cpu.final_output.quantity}</p>
             ) : (
                 <p className="italic">{toAEUnit(cpu.storage)}</p>
             )}

@@ -6,6 +6,7 @@ import { subscribeToCPU } from "@/util/supabase/fetch";
 import { useEffect, useState } from "react";
 import cn from 'classnames';
 import { toAEUnit } from "@/util/unit";
+import { formatName } from "@/util/ae2";
 
 type Props = {
     name: string;
@@ -92,7 +93,7 @@ export default function CPUItems({ name, initialData }: Props) {
                         })}
                         key={item.item_name}
                     >
-                        <p>{item.item_name}</p>
+                        <p>{formatName(item.item_name)}</p>
                         {item.status === 'active' && (
                             <p>Crafting {toAEUnit(item.activeQuantity)}, Pending {toAEUnit(item.pendingQuantity)}, Stored: {toAEUnit(item.storedQuantity)}</p>
                         )}
