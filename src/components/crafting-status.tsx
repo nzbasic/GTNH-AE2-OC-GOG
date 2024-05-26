@@ -19,7 +19,6 @@ function sortCpus(cpus: ParsedCPURow[]) {
         return a.name.localeCompare(b.name);
     })
 
-    console.log(sorted);
     return sorted;
 }
 

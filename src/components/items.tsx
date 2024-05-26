@@ -73,7 +73,7 @@ const columns: ColumnDef<ItemRow>[] = [
         cell: ({ row }) => (
             <div className="flex justify-end">
                 <Link className="ml-auto" href={`/items/${row.getValue("item_name")}`}>
-                    <Button size="xs" className="text-xs">View</Button>
+                    <Button size="xs" variant="ghost" className="text-xs">View</Button>
                 </Link>
             </div>
         )

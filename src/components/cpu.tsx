@@ -32,9 +32,9 @@ export default function CPU({ cpu }: Props) {
     return (
         <Card
             className={cn('flex flex-col items-start w-full gap-1 rounded-sm shadow-sm p-2 text-xs',
-                { 'hover:brightness-95': cpu.busy },
-                { 'bg-green-100 dark:bg-green-900 border-green-300': status === 'active' },
-                { 'bg-orange-100 dark:bg-orange-900 border-orange-300': status === 'stalled' }
+                { 'hover:brightness-95 dark:hover:brightness-110': cpu.busy },
+                { 'bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-500': status === 'active' },
+                { 'bg-orange-100 dark:bg-orange-900 border-orange-300 dark:border-orange-500': status === 'stalled' }
             )}
             key={cpu.id}
         >

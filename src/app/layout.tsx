@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { ModeToggle } from "@/components/dark";
 import Link from "next/link";
+import cn from 'classnames';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={cn(inter.className, '')}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"

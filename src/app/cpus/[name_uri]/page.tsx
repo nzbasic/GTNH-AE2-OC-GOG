@@ -16,8 +16,6 @@ export default async function CPU({ params: { name_uri } }: Props) {
     const client = createClient()
     const data = await fetchCPU(client, name);
 
-    console.log(data);
-
     if (!data) return (
         <div>
             <p>CPU Not found</p>
@@ -31,15 +29,10 @@ export default async function CPU({ params: { name_uri } }: Props) {
             <p>CPU Name: {name}</p>
 
             {isActive ? (
-                <>
-                    <p>Crafting: {data.final_output.quantity}x {data.final_output.item_name}</p>
-
-                    <CPUItems name={name} initialData={data} />
-                </>
+                <CPUItems name={name} initialData={data} />
             ) : (
                 <p>Not crafting anything</p>
             )}
-
         </div>
     )
 }

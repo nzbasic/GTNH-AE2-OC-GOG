@@ -17,7 +17,7 @@ export default function LineChartHero<T>({ data, name, size }: Props<T>) {
 
     return (
         <LineChart
-            className={cn('', {
+            className={cn('bg-card shadow-sm', {
                 'h-28 border rounded-sm': size === 'card',
                 'h-96 border rounded': size === 'full',
             })}

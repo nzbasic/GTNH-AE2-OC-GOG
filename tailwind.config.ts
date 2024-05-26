@@ -64,7 +64,7 @@ export const config = {
                         muted: "#131A2B",
                         subtle: colors.gray[800],
                         DEFAULT: colors.gray[900],
-                        emphasis: colors.gray[300],
+                        emphasis: colors.gray[400],
                     },
                     border: {
                         DEFAULT: colors.gray[800],

@@ -19,7 +19,6 @@ export default function Favourites() {
     const [favourites, setFavourites] = useLocalStorage('favourites', defaultFavs)
 
     function onSortEnd(oldIndex: number, newIndex: number) {
-        console.log(oldIndex, newIndex)
         setFavourites((array) => arrayMoveImmutable(array, oldIndex, newIndex));
     };
 
@@ -99,7 +98,7 @@ const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favourite({ n
                     <RiDeleteBinLine className="w-4 h-4 text-red-500 cursor-pointer" onClick={() => remove()} />
 
                     <SortableKnob>
-                        <div className="bg-gray-100 dark:bg-transparent p-1 rounded-sm cursor-pointer">
+                        <div className="rounded-sm cursor-pointer">
                             <RiDraggable className="h-4 w-4" />
                         </div>
                     </SortableKnob>

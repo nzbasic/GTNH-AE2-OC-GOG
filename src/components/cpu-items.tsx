@@ -13,6 +13,7 @@ type Props = {
 }
 
 export default function CPUItems({ name, initialData }: Props) {
+    const [output, setOutput] = useState(initialData.final_output)
     const [items, setItems] = useState(handleSetData(initialData));
 
     function handleSetData(data: ParsedCPURow) {
@@ -69,6 +70,7 @@ export default function CPUItems({ name, initialData }: Props) {
 
         const listener = subscribeToCPU(client, name, async (cpu) => {
             setItems(handleSetData(cpu));
+            setOutput(cpu.final_output)
         });
 
         return () => {
@@ -78,12 +80,14 @@ export default function CPUItems({ name, initialData }: Props) {
 
     return (
         <div className="flex flex-col gap-4">
+            <p>Crafting: {output.quantity}x {output.item_name}</p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                 {items.map((item, index) => (
                     <div
-                        className={cn('flex flex-col text-xs border p-2 rounded-sm', {
-                            'bg-green-100 dark:bg-green-900 border-green-300': item.status === 'active',
-                            'bg-orange-100 dark:bg-orange-900 border-orange-300': item.status === 'pending',
+                        className={cn('flex flex-col text-xs border p-2 rounded-sm bg-card', {
+                            'bg-green-100 dark:bg-green-900 border-green-500': item.status === 'active',
+                            'bg-orange-100 dark:bg-orange-900 border-orange-500': item.status === 'pending',
                             '': item.status === 'stored',
                         })}
                         key={item.item_name}
