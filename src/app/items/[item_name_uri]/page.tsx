@@ -48,14 +48,14 @@ export default async function Item({ params: { item_name_uri } }: Props) {
 
     function toTimeString(iso?: string) {
         if (!iso) return "N/A"
-        return DateTime.fromISO(iso).toLocal().toFormat("dd/MM HH:mm")
+        return DateTime.fromISO(iso).toFormat("dd/MM HH:mm")
     }
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
             <h2 className="text-lg font-medium">{formatName(item_name)}</h2>
 
-            <div className="grid grid-cols-3">
+            <div className="grid lg:grid-cols-3 gap-y-2">
                 <div>
                     <p className="text-sm">Current ({toTimeString(now.created_at)})</p>
                     <p>{toAEUnit(now?.quantity)}</p>

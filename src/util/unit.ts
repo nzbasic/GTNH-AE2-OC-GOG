@@ -5,7 +5,7 @@ export function toAEUnit(number?: number | undefined) {
     if (number === undefined) return 'N/A';
 
     let unit = '';
-    let value = number;
+    let value = number
 
     for (let i = 0; i < units.length; i++) {
         if (value < size) break;

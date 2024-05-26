@@ -27,14 +27,16 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <main className="flex flex-col gap-8 py-24 container mx-auto min-h-screen">
-                        <header className="flex justify-between">
+                        <header className="flex justify-between flex-wrap gap-x-8 gap-y-2">
                             <Link href="/">
                                 <h1 className="font-bold text-2xl">Garden of Grind AE2 Status</h1>
                             </Link>
                             <ModeToggle />
                         </header>
 
-                        {children}
+                        <div className="flex flex-col gap-8 flex-grow">
+                            {children}
+                        </div>
 
                         <footer>
                             <a href="https://nzbasic.com">by nzbasic</a>

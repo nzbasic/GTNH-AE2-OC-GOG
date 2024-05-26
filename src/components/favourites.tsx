@@ -3,31 +3,53 @@
 import { defaultFavs } from "@/util/default";
 import { useLocalStorage } from "usehooks-ts"
 import LineChartHero from "./chart";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/util/supabase/client";
-import { fetchItem, mapJoinedItem, subscribeToItem } from "@/util/supabase/fetch";
+import { fetchItem, subscribeToItem } from "@/util/supabase/fetch";
 import { formatName } from "@/util/ae2";
 import Link from "next/link";
-import { FlatJoinedItemRow, ItemRow, JoinedItemRow } from "@/types/supabase";
+import { FlatJoinedItemRow } from "@/types/supabase";
 import { toAEUnit } from "@/util/unit";
 import { DateTime } from "luxon";
-import cn from 'classnames';
+import { arrayMoveImmutable } from 'array-move';
+import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
+import { RiDraggable, RiDeleteBinLine } from '@remixicon/react';
 
 export default function Favourites() {
-    const [favourites] = useLocalStorage('favourites', defaultFavs)
+    const [favourites, setFavourites] = useLocalStorage('favourites', defaultFavs)
+
+    function onSortEnd(oldIndex: number, newIndex: number) {
+        console.log(oldIndex, newIndex)
+        setFavourites((array) => arrayMoveImmutable(array, oldIndex, newIndex));
+    };
+
+    function removeFavourite(name: string) {
+        setFavourites((array) => array.filter(fav => fav !== name));
+    }
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2 gap-y-4">
+            <SortableList
+                onSortEnd={onSortEnd}
+                className="grid md:grid-cols-2 lg:grid-cols-4 gap-2 gap-y-4"
+                draggedItemClassName="dragged"
+            >
                 {favourites.map(fav => (
-                    <Favourite key={fav} name={fav} />
+                    <SortableItem key={fav}>
+                        <Favourite key={fav} name={fav} remove={() => removeFavourite(fav)} />
+                    </SortableItem>
                 ))}
-            </div>
+            </SortableList>
         </div>
     )
 }
 
-function Favourite({ name }: { name: string }) {
+type Props = {
+    name: string;
+    remove: () => void;
+}
+
+const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favourite({ name, remove }: Props, ref) {
     const [data, setData] = useState([] as FlatJoinedItemRow[]);
 
     useEffect(() => {
@@ -64,19 +86,27 @@ function Favourite({ name }: { name: string }) {
     const increasePercentage = Number(rawIncrease.toFixed(2));
 
     return (
-        <div className="flex flex-col gap-1">
-            <Link className="flex gap-2 text-sm" href={`/items/${name}`}>
-                <p className="font-medium">{formatName(name)}</p>
-                {last && (
-                    <p>{toAEUnit(data[data.length - 1]?.quantity)}</p>
-                )}
+        <div ref={ref} className="flex flex-col gap-1">
+            <div className="flex justify-between">
+                <Link className="flex gap-2 text-sm select-none" href={`/items/${name}`}>
+                    <p className="font-medium">{formatName(name)}</p>
+                    {last && (
+                        <p>{toAEUnit(data[data.length - 1]?.quantity)}</p>
+                    )}
+                </Link>
 
-                {first && last && (
-                    <p className={cn({ 'text-red-500': increasePercentage < 0, 'text-green-500': increasePercentage > 0 })}>{increasePercentage.toFixed(2)}%</p>
-                )}
-            </Link>
+                <div className="flex items-center gap-2">
+                    <RiDeleteBinLine className="w-4 h-4 text-red-500 cursor-pointer" onClick={() => remove()} />
+
+                    <SortableKnob>
+                        <div className="bg-gray-100 dark:bg-transparent p-1 rounded-sm cursor-pointer">
+                            <RiDraggable className="h-4 w-4" />
+                        </div>
+                    </SortableKnob>
+                </div>
+            </div>
 
             <LineChartHero data={data} name={name} size="card" />
         </div>
     );
-}
+})

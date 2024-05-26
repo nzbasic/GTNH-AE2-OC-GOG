@@ -1,16 +1,28 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { CPURow, FlatJoinedItemRow, ItemRow, JoinedItemRow } from "@/types/supabase";
+import { CPUItem, CPURow, FlatJoinedItemRow, ItemRow, JoinedItemRow, ParsedCPURow } from "@/types/supabase";
 import { DateTime } from "luxon";
 
-function mapStringToItems(string: string) {
+function mapStringToItems(string: string): CPUItem[] {
     if (!string) return [];
     if (string == '') return [];
 
     // form = "item_name~quantity;"
-    return string.split(";")?.map(item => {
+    const items = string.split(";")?.map(item => {
         const [item_name, quantity] = item.split("~");
         return { item_name, quantity: parseInt(quantity) };
     }) ?? [];
+
+    return items.filter(i => i.item_name);
+}
+
+function parseCPURow(cpu: CPURow): ParsedCPURow {
+    return {
+        ...cpu,
+        active_items: typeof cpu.active_items === "string" ? mapStringToItems(cpu.active_items) : cpu.active_items,
+        stored_items: typeof cpu.stored_items === "string" ? mapStringToItems(cpu.stored_items) : cpu.stored_items,
+        final_output: typeof cpu.final_output === "string" ? mapStringToItems(cpu.final_output)[0] : cpu.final_output,
+        pending_items: typeof cpu.pending_items === "string" ? mapStringToItems(cpu.pending_items) : cpu.pending_items,
+    }
 }
 
 export async function fetchTypeFromInsert(client: SupabaseClient, insert_id: number, type: string) {
@@ -29,15 +41,7 @@ export async function fetchTypeFromInsert(client: SupabaseClient, insert_id: num
     }
     if (type === "stats") return data[0];
     if (type === "cpus") {
-        return data.map((cpu: CPURow) => {
-            return {
-                ...cpu,
-                active_items: mapStringToItems(cpu.active_items),
-                stored_items: mapStringToItems(cpu.stored_items),
-                final_output: mapStringToItems(cpu.final_output)[0],
-                pending_items: mapStringToItems(cpu.pending_items),
-            }
-        });
+        return data.map(parseCPURow);
     }
 }
 
@@ -73,7 +77,7 @@ export const mapJoinedItem = (item: JoinedItemRow) => {
     return {
         ...item,
         ...item.inserts,
-        date: DateTime.fromISO(item.inserts.created_at).toLocal().toFormat("HH:mm:ss"),
+        date: DateTime.fromISO(item.inserts.created_at).toFormat("dd/MM HH:mm:ss"),
         [item.item_name]: item.quantity,
     }
 }
@@ -89,6 +93,13 @@ export async function fetchItem(client: SupabaseClient, item: string, after = Da
     return sorted as FlatJoinedItemRow[];
 }
 
+export async function fetchCPU(client: SupabaseClient, name: string) {
+    const { data, error } = await client.from("cpus").select("*, inserts!inner(*)").eq("name", name).order("insert_id", { ascending: false }).limit(1).single();
+    if (!data) return;
+
+    return parseCPURow(data);
+}
+
 export function subscribeToItem(client: SupabaseClient, item: string, fn: (item: ItemRow) => void) {
     return client
         .channel(item)
@@ -96,6 +107,17 @@ export function subscribeToItem(client: SupabaseClient, item: string, fn: (item:
             "postgres_changes",
             { event: "INSERT", schema: "public", table: "items", filter: 'item_name=eq.' + item },
             (row: { new: ItemRow }) => fn(row.new)
+        )
+        .subscribe();
+}
+
+export function subscribeToCPU(client: SupabaseClient, name: string, fn: (cpu: ParsedCPURow) => void) {
+    return client
+        .channel("cpus")
+        .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "public", table: "cpus", filter: 'name=eq.' + name },
+            (row: { new: CPURow }) => fn(parseCPURow(row.new))
         )
         .subscribe();
 }
