@@ -54,6 +54,7 @@ export default function AutoItemChart({ initialData, name, size }: Props) {
         if (period === "week") return data.filter((d) => DateTime.fromISO(d.created_at) > DateTime.now().minus({ days: 7 }));
         if (period === "day") return data.filter((d) => DateTime.fromISO(d.created_at) > DateTime.now().minus({ days: 1 }));
         if (period === "hour") return data.filter((d) => DateTime.fromISO(d.created_at) > DateTime.now().minus({ hours: 1 }));
+        return data;
     }, [data, period]);
 
     return (
