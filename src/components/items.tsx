@@ -59,12 +59,12 @@ const columns: ColumnDef<ItemRow>[] = [
     },
     {
         accessorKey: "quantity",
-        header: () => <div className="text-right text-xs hidden md:block">Raw</div>,
+        header: () => <div className="text-right text-xs hidden xl:block">Raw</div>,
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("quantity"))
             const formatted = new Intl.NumberFormat("en-US", {}).format(amount)
 
-            return <div className="text-right text-xs font-medium hidden md:block">{formatted}</div>
+            return <div className="text-right text-xs font-medium hidden xl:block">{formatted}</div>
         },
     },
     {

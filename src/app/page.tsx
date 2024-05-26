@@ -38,7 +38,7 @@ export default async function Home() {
 
             <div className="flex flex-col gap-4">
                 <h2 className="border-b text-md font-medium pb-1">Items</h2>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                     <DynamicItemsTable items={fluids} name="fluids" />
 
                     <DynamicItemsTable items={items} name="items" />
