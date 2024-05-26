@@ -2,6 +2,7 @@ import { OCItems } from "@/types/oc";
 import { clean } from "@/util/supabase/clean";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
+import { WebhookClient } from 'discord.js';
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
@@ -22,6 +23,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
         //     }
         // }).filter(Boolean);
         //
+
+        const webhook = new WebhookClient({ url: 'https://discord.com/api/webhooks/1244199814279729284/iU5e_AlfqAk0VO71RXdc7HG6ITnewUa6uV6ua2bgMDJcwCPGT3hZOvEVqTzqszlJV18F' })
+        webhook.send("test " + body['drop of Cetane-Boosted Diesel']);
 
         const keys = [...(new Set(Object.keys(body)))];
 
