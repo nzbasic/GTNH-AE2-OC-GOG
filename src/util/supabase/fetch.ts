@@ -77,7 +77,7 @@ export const mapJoinedItem = (item: JoinedItemRow) => {
     return {
         ...item,
         ...item.inserts,
-        date: DateTime.fromISO(item.inserts.created_at).toFormat("dd/MM HH:mm:ss"),
+        date: DateTime.fromISO(item.inserts.created_at).toFormat("dd/MM HH:mm"),
         [item.item_name]: item.quantity,
     }
 }

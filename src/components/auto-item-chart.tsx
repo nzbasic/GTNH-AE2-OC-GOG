@@ -37,7 +37,7 @@ export default function AutoItemChart({ initialData, name, size }: Props) {
             const mapped = {
                 ...item,
                 ...data,
-                date: DateTime.fromISO(data.created_at).toFormat("dd/MM HH:mm:ss"),
+                date: DateTime.fromISO(data.created_at).toFormat("dd/MM HH:mm"),
                 [item.item_name]: item.quantity,
             }
 

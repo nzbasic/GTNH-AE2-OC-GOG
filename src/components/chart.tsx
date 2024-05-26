@@ -19,15 +19,15 @@ export default function LineChartHero<T>({ data, name, size }: Props<T>) {
         <LineChart
             className={cn('bg-card shadow-sm', {
                 'h-28 border rounded-sm': size === 'card',
-                'h-96 border rounded': size === 'full',
+                'h-96 border rounded p-2 py-4': size === 'full',
             })}
             data={data}
             index="date"
             categories={[name]}
             colors={['indigo']}
             valueFormatter={toAEUnit}
-            showYAxis={false}
-            showXAxis={false}
+            showYAxis={size === 'full'}
+            showXAxis={size === 'full'}
             showGridLines={true}
             showLegend={false}
             minValue={minWithMargin}
