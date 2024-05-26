@@ -39,9 +39,19 @@ export type JoinedItemRow = ItemRow & {
 
 export type FlatJoinedItemRow = ItemRow & InsertRow;
 
-export type ParsedCPURow = CPURow & {
-    active_items: ItemRow[];
-    stored_items: ItemRow[];
-    pending_items: ItemRow[];
-    final_output: ItemRow;
+export type CPUItem = {
+    item_name: string;
+    quantity: number;
+}
+
+export type ParsedCPURow = {
+    id: number;
+    name: string;
+    busy: boolean;
+    storage: number;
+    insert_id: number;
+    active_items: CPUItem[];
+    stored_items: CPUItem[];
+    pending_items: CPUItem[];
+    final_output: CPUItem;
 }

@@ -1,8 +1,22 @@
 
 import { OCItems, OCStats } from "@/types/oc";
+import { CPUItem, CPURow, ParsedCPURow } from "@/types/supabase";
 import { clean } from "@/util/supabase/clean";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
+
+function mapStringToItems(string: string): CPUItem[] {
+    if (!string) return [];
+    if (string == '') return [];
+
+    // form = "item_name~quantity;"
+    const items = string.split(";")?.map(item => {
+        const [item_name, quantity] = item.split("~");
+        return { item_name, quantity: parseInt(quantity) };
+    }) ?? [];
+
+    return items.filter(i => i.item_name);
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
@@ -26,10 +40,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         await client.from("cpus").insert(cpus.map(cpu => ({
             name: cpu.name,
             busy: cpu.busy,
-            final_output: cpu.finalOutput,
-            pending_items: cpu.pendingItems,
-            active_items: cpu.activeItems,
-            stored_items: cpu.storedItems,
+            final_output: typeof cpu.finalOutput === "string" ? mapStringToItems(cpu.finalOutput)[0] : cpu.finalOutput,
+            pending_items: typeof cpu.pendingItems === "string" ? mapStringToItems(cpu.pendingItems) : cpu.pendingItems,
+            active_items: typeof cpu.activeItems === "string" ? mapStringToItems(cpu.activeItems) : cpu.activeItems,
+            stored_items: typeof cpu.storedItems === "string" ? mapStringToItems(cpu.storedItems) : cpu.storedItems,
             storage: cpu.storage,
             insert_id,
         })));
