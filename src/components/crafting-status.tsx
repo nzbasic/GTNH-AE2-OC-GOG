@@ -3,7 +3,7 @@
 import { ParsedCPURow } from "@/types/supabase";
 import { createClient } from "@/util/supabase/client"
 import { fetchLatestType, fetchTypeFromInsert, subscribeToInserts } from "@/util/supabase/fetch";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CPU from "./cpu";
 import Link from "next/link";
 
@@ -56,15 +56,15 @@ export default function CraftingStatus() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
             {!cpus.length && <div>Loading...</div>}
             {cpus.map(cpu => (
-                <>
+                <React.Fragment key={cpu.id}>
                     {cpu.busy ? (
                         <Link href={`/cpus/${cpu.name}`}>
-                            <CPU key={cpu.id} cpu={cpu} />
+                            <CPU cpu={cpu} />
                         </Link>
                     ) : (
-                        <CPU key={cpu.id} cpu={cpu} />
+                        <CPU cpu={cpu} />
                     )}
-                </>
+                </React.Fragment>
             ))}
         </div>
     )

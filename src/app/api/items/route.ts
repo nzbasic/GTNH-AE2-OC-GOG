@@ -8,7 +8,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body: OCItems = await req.json();
 
-        tryWarnDiscord(body);
+        // tryWarnDiscord(body);
 
         const keys = [...(new Set(Object.keys(body)))];
 
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         const insert_id = insert.data[0].id;
 
-        await client.from('items').insert(items.map(item => ({ ...item, insert_id })));
+        const { error } = await client.from('items').insert(items.map(item => ({ ...item, insert_id })));
+        console.log(error);
 
         await clean();
 
