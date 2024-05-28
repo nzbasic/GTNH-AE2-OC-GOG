@@ -59,7 +59,7 @@ export async function clean() {
     const supabase = await createAdminClient();
 
     // Data retention:
-    // Keep all data from the past hour
+    // Keep all items from the past hour
     // Keep 1 per minute for the past day
     // After that, keep 1 per hour
     // All inserts are tracked on the "inserts" table, use that to find which data to remove

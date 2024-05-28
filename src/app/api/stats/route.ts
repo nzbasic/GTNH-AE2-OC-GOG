@@ -37,6 +37,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const insert_id = insert.data[0].id;
 
         await client.from("stats").insert({ avg_power_injection, stored_power, avg_power_use, insert_id });
+
+        // truncate cpus
+        await client.from("cpus").delete().neq("id", -1)
+
+        // insert cpus
         await client.from("cpus").insert(cpus.map(cpu => ({
             name: cpu.name,
             busy: cpu.busy,
@@ -45,7 +50,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             active_items: typeof cpu.activeItems === "string" ? mapStringToItems(cpu.activeItems) : cpu.activeItems,
             stored_items: typeof cpu.storedItems === "string" ? mapStringToItems(cpu.storedItems) : cpu.storedItems,
             storage: cpu.storage,
-            insert_id,
+            insert_id: -1, // no longer tracking these
         })));
 
         try {

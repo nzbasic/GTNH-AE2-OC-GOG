@@ -1,6 +1,6 @@
 import { createClient } from "@/util/supabase/server";
 import React from "react";
-import { fetchLatestType } from "@/util/supabase/fetch";
+import { fetchCPUs, fetchLatestType } from "@/util/supabase/fetch";
 import { cookies } from "next/headers";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
@@ -26,7 +26,7 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
     const items = network.items;
     const fluids = network.fluids;
 
-    const cpus = await fetchLatestType(client, "cpus")
+    const cpus = await fetchCPUs(client)
 
     return (
         <>

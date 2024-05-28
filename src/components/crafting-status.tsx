@@ -4,7 +4,7 @@ import { ParsedCPURow } from "@/types/supabase";
 import React, { useState } from "react";
 import CPU from "./cpu";
 import Link from "next/link";
-import { fetchLatestType } from "@/util/supabase/fetch";
+import { fetchCPUs, fetchLatestType } from "@/util/supabase/fetch";
 import { createClient } from "@/util/supabase/client";
 import cn from 'classnames';
 import Refresh from "./refresh";
@@ -31,7 +31,7 @@ export default function CraftingStatus({ initialData }: { initialData: ParsedCPU
     async function updateCpus() {
         setRefreshing(true);
         const client = createClient();
-        const res = await fetchLatestType(client, "cpus")
+        const res = await fetchCPUs(client)
 
         if (cpus && !res.length) {
             return;

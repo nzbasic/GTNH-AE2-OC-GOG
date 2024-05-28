@@ -25,8 +25,10 @@ function parseCPURow(cpu: CPURow): ParsedCPURow {
     }
 }
 
-export async function fetchTypeFromInsert(client: SupabaseClient, insert_id: number, type: string) {
-    const { data, error } = await client.from(type).select("*").eq("insert_id", insert_id);
+export async function fetchTypeFromInsert(client: SupabaseClient, insert_id: number, type: string, select: string = "*") {
+    const res = await client.from(type).select(select as '*').eq("insert_id", insert_id);
+    const data: any[] | null = res.data;
+    const error = res.error;
     if (!data) return;
     if (error) console.error(error);
 
@@ -55,11 +57,20 @@ export async function fetchLatestInsert(client: SupabaseClient, type: string) {
     return insert_id;
 }
 
-export async function fetchLatestType(client: SupabaseClient, type: string) {
+export async function fetchLatestType(client: SupabaseClient, type: string, select?: string) {
     const insert_id = await fetchLatestInsert(client, type);
     if (!insert_id) return;
 
-    return fetchTypeFromInsert(client, insert_id, type);
+    return fetchTypeFromInsert(client, insert_id, type, select);
+}
+
+export async function fetchCPUs(client: SupabaseClient) {
+    const { data, error } = await client.from("cpus").select("*");
+
+    if (!data) return [];
+    if (error) console.error(error);
+
+    return data.map(parseCPURow);
 }
 
 export function subscribeToInserts(client: SupabaseClient, fn: (insert_id: number, type: string) => void) {
@@ -98,6 +109,30 @@ export async function fetchCPU(client: SupabaseClient, name: string) {
     if (!data) return;
 
     return parseCPURow(data);
+}
+
+export async function fetchItems(client: SupabaseClient) {
+    const { data, error } = await client.from("items").select("*");
+    if (!data) return;
+
+    return data;
+}
+
+export function subscribeToItems(client: SupabaseClient, fn: (items: ItemRow[]) => void) {
+    const wrapped = (insert_id: string) => {
+        fetchTypeFromInsert(client, parseInt(insert_id), "items").then(fn);
+    };
+
+    const channel = client
+        .channel("items_inserts")
+        .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "public", table: "inserts", filter: 'type=eq.items' },
+            (row) => wrapped(row.new.id)
+        )
+        .subscribe();
+
+    return channel;
 }
 
 export function subscribeToItem(client: SupabaseClient, item: string, fn: (item: ItemRow) => void) {
