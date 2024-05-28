@@ -10,7 +10,7 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
     {
         global: {
             fetch: createFetch({
-                next: {  revalidate: 0 }
+                next: {  revalidate: 10 }
             })
         },
         cookies: {

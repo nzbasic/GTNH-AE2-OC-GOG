@@ -13,6 +13,8 @@ const DynamicDualItemsTable = dynamic(() => import('@/components/dual-items-tabl
     ssr: false,
 })
 
+export const revalidate = 10;
+
 export default async function Home({ searchParams: { code } }: { searchParams: { code?: string } }) {
     const cookieStore = cookies();
     const client = createClient(cookieStore);
