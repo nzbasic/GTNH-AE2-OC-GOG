@@ -83,10 +83,11 @@ const columns: ColumnDef<ItemRow>[] = [
 type Props = {
     items: ItemRow[]
     name: string;
+    refreshing: boolean;
 }
 
-export default function ItemsTable({ items, name }: Props) {
+export default function ItemsTable({ items, name, refreshing }: Props) {
     return (
-        <DataTable columns={columns} data={items} name={name} />
+        <DataTable columns={columns} data={items} name={name} refreshing={refreshing} />
     );
 }

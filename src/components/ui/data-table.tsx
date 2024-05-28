@@ -27,12 +27,14 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     name: string;
+    refreshing: boolean;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    name
+    name,
+    refreshing
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
