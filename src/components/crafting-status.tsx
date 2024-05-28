@@ -25,7 +25,7 @@ function sortCpus(cpus: ParsedCPURow[]) {
 export default function CraftingStatus() {
     const [cpus, setCpus] = useState([] as ParsedCPURow[]);
 
-    async function updateCpus(insert_id: number) {
+    async function updateCpus() {
         const client = createClient();
         const res = await fetchLatestType(client, "cpus")
 
@@ -37,19 +37,19 @@ export default function CraftingStatus() {
     }
 
     useEffect(() => {
-        const client = createClient();
+        updateCpus()
 
-        fetchLatestType(client, "cpus").then(res => setCpus(sortCpus(res)));
+        // fetchLatestType(client, "cpus").then(res => setCpus(sortCpus(res)));
 
-        const listener = subscribeToInserts(client, (id, type) => {
-            if (type === "stats") {
-                updateCpus(id);
-            }
-        })
+        // const listener = subscribeToInserts(client, (id, type) => {
+        //     if (type === "stats") {
+        //         updateCpus(id);
+        //     }
+        // })
 
-        return () => {
-            listener.unsubscribe();
-        }
+        // return () => {
+        //     listener.unsubscribe();
+        // }
     }, []);
 
     return (
