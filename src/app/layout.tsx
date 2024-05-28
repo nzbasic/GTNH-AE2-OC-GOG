@@ -41,6 +41,8 @@ export default function RootLayout({
 
                         <footer>
                             <a href="https://nzbasic.com">by nzbasic</a>
+
+                            <p className="font-bold py-4">NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
                         </footer>
                     </main>
                 </ThemeProvider>
