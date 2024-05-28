@@ -50,7 +50,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
             active_items: typeof cpu.activeItems === "string" ? mapStringToItems(cpu.activeItems) : cpu.activeItems,
             stored_items: typeof cpu.storedItems === "string" ? mapStringToItems(cpu.storedItems) : cpu.storedItems,
             storage: cpu.storage,
-            insert_id: -1, // no longer tracking these
         })));
 
         try {
