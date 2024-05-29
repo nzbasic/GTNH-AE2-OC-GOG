@@ -1,3 +1,4 @@
+import { Instruction } from "@/types/supabase";
 import { createClient } from "@/util/supabase/server";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,8 +7,21 @@ import { NextRequest, NextResponse } from "next/server";
 // Get all instructions
 export async function GET(req: NextRequest) {
     const client = await createAdminClient();
-    const instructions = await client.from('instructions').select('*').eq('status', 'awaiting-assignment');
-    return new Response(JSON.stringify(instructions), { headers: { 'content-type': 'application/json' } });
+    const instructions = await client.from('instructions').select('*').eq('status', 'awaiting-assignment').eq('type', 'meteor');
+
+    const data: Instruction[] = instructions.data ?? []
+    const mapped = data.map(instruction => ({
+        lp: instruction.data.cost,
+        cost: instruction.data.cost,
+        focusMeta: instruction.data.focusMeta,
+        focusName: instruction.data.focusName,
+        request: instruction.data.request,
+    }));
+
+    // convert to object with index as keys
+    const object = mapped.reduce((acc, cur, i) => ({ ...acc, [i]: cur }), {});
+
+    return new Response(JSON.stringify(object), { headers: { 'content-type': 'application/json' } });
 }
 
 // POST /api/instructions
