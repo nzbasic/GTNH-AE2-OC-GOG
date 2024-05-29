@@ -2,11 +2,12 @@
 
 import { ParsedCPURow } from "@/types/supabase"
 import { createClient } from "@/util/supabase/client";
-import { subscribeToCPU } from "@/util/supabase/fetch";
+import { fetchCPU, subscribeToCPU } from "@/util/supabase/fetch";
 import { useEffect, useState } from "react";
 import cn from 'classnames';
 import { toAEUnit } from "@/util/unit";
 import { formatName } from "@/util/ae2";
+import Refresh from "./refresh";
 
 type Props = {
     name: string;
@@ -16,6 +17,7 @@ type Props = {
 export default function CPUItems({ name, initialData }: Props) {
     const [output, setOutput] = useState(initialData.final_output)
     const [items, setItems] = useState(handleSetData(initialData));
+    const [refreshing, setRefreshing] = useState(false);
 
     function handleSetData(data: ParsedCPURow) {
         const fullItemNames = [...(new Set([
@@ -66,6 +68,16 @@ export default function CPUItems({ name, initialData }: Props) {
         return sorted;
     }
 
+    async function handleRefresh() {
+        setRefreshing(true);
+        const client = createClient();
+        const res = await fetchCPU(client, name);
+        if (!res) return;
+        setItems(handleSetData(res));
+        setOutput(res.final_output);
+        setRefreshing(false);
+    }
+
     useEffect(() => {
         const client = createClient();
 
@@ -82,6 +94,8 @@ export default function CPUItems({ name, initialData }: Props) {
     return (
         <div className="flex flex-col gap-4">
             <p>Crafting: {output.quantity}x {output.item_name}</p>
+
+            <Refresh onClick={handleRefresh} refreshing={refreshing} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                 {items.map((item, index) => (
