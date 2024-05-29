@@ -1,10 +1,9 @@
 import { OCItems } from "@/types/oc";
-import { clean } from "@/util/supabase/clean";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
 
-// POST /api/items
-// Called by OC to track items
+// POST /api/craftables
+// Called by OC to show craftable items
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body: OCItems = await req.json();
@@ -19,16 +18,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         });
 
         const client = await createAdminClient();
-        const insert = await client.from('inserts').insert({ type: "items" }).select("id");
-        if (!insert.data) {
-            return NextResponse.json('Failed to create insert', { status: 500 });
-        }
-
-        const insert_id = insert.data[0].id;
-
-        await client.from('items').insert(items.map(item => ({ ...item, insert_id })));
-
-        await clean();
+        await client.from('craftables').delete().neq('id', 0);
+        await client.from('craftables').insert(items);
 
         return NextResponse.json('ok');
     } catch(e: any) {

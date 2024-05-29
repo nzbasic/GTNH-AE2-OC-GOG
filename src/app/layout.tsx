@@ -39,9 +39,8 @@ export default function RootLayout({
                             {children}
                         </div>
 
-                        <footer>
+                        <footer className="flex flex-col gap-4">
                             <a href="https://nzbasic.com">by nzbasic</a>
-
                             <p className="font-bold py-4">NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
                         </footer>
                     </main>

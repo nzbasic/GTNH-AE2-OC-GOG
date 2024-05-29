@@ -55,3 +55,27 @@ export type ParsedCPURow = {
     pending_items: CPUItem[];
     final_output: CPUItem;
 }
+
+export type Instruction = {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    sent_by: string;
+    status: string; // awaiting-assignment, assigned, in-progress, completed
+    type: string; // 'meteor'
+    data: Record<string, any>
+}
+
+export type MeteorItem = {
+    item_name: string;
+    weight: number;
+}
+
+export type Meteor = {
+    id: number;
+    created_at: string;
+    name: string;
+    radius: number;
+    cost: number;
+    contents: MeteorItem[];
+}

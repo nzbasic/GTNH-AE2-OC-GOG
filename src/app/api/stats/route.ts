@@ -18,6 +18,8 @@ function mapStringToItems(string: string): CPUItem[] {
     return items.filter(i => i.item_name);
 }
 
+// POST /api/stats
+// Called by OC to track stats and CPUs
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body: OCStats = await req.json();
