@@ -6,5 +6,5 @@ export const createClient = () =>
   createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { fetch: createFetch({ next: {  revalidate: 10 } })}}
+    { global: { fetch: createFetch({ next: {  revalidate: 0 } })}}
   );

@@ -105,7 +105,8 @@ export async function fetchItem(client: SupabaseClient, item: string, after = Da
 }
 
 export async function fetchCPU(client: SupabaseClient, name: string) {
-    const { data, error } = await client.from("cpus").select("*, inserts!inner(*)").eq("name", name).order("insert_id", { ascending: false }).limit(1).single();
+    const { data, error } = await client.from("cpus").select("*").eq("name", name).limit(1).single();
+    if (error) console.error(error);
     if (!data) return;
 
     return parseCPURow(data);
