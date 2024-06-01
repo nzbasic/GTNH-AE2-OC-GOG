@@ -12,6 +12,8 @@ import { Meteor, MeteorItem } from '@/types/supabase';
 
     const client = await createAdminClient();
 
+    let output = "local meteors = {\n"
+
     for (const file of files) {
         if (!file.endsWith('.json')) continue;
 
@@ -32,9 +34,18 @@ import { Meteor, MeteorItem } from '@/types/supabase';
             cost: info.cost,
             radius: info.radius,
             contents,
+            focusModId: info.focusModId,
+            focusName: info.focusName,
+            focusMeta: info.focusMeta,
         }
 
-        await client.from('meteors').delete().eq('name', meteor.name);
-        await client.from('meteors').insert(meteor);
+        output += `  ["${meteor.focusName}-${meteor.focusMeta}"] = ${meteor.cost},\n`;
+
+        // await client.from('meteors').delete().eq('name', meteor.name);
+        // await client.from('meteors').insert(meteor);
     }
+
+    output += "}\n";
+
+    await fs.writeFile(join(__dirname, 'meteors.lua'), output);
 })();
