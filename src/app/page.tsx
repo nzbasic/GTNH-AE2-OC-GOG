@@ -25,8 +25,12 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
 
     const network = await fetchLatestType(client, "items");
 
-    const items = network.items;
-    const fluids = network.fluids;
+    const items = network?.items ?? [];
+    const fluids = network?.fluids ?? [];
+
+    if (!items || !items.length) {
+        redirect("/");
+    }
 
     const cpus = await fetchCPUs(client)
 
