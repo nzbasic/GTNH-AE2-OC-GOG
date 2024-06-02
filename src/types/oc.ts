@@ -13,10 +13,21 @@ export type CPU = {
 }
 
 export type OCStats = {
-    cpus: CPU[]
-    avgPowerInjection: number;
-    storedPower: number;
-    avgPowerUsage: number;
+    network: {
+        cpus: CPU[]
+        avgPowerInjection: number;
+        storedPower: number;
+        avgPowerUsage: number;
+    },
+    lsc: {
+        eu: string;
+        euIn: number;
+        euOut: number;
+    },
+    tps: {
+        mspt: number;
+        tps: number;
+    }
 }
 
 export type OCItems = Item;

@@ -24,10 +24,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body: OCStats = await req.json();
 
-        const cpus = body.cpus;
-        const avg_power_injection = body.avgPowerInjection;
-        const stored_power = body.storedPower;
-        const avg_power_use = body.avgPowerUsage;
+        const networkData = body.network;
+        const lscData = body.lsc;
+        const tpsData = body.tps;
+
+        if (!networkData || !lscData || !tpsData) return NextResponse.json('Missing data', { status: 400 });
+
+        const cpus = networkData.cpus;
+        // const avg_power_injection = networkData.avgPowerInjection;
+        // const stored_power = networkData.storedPower;
+        // const avg_power_use = networkData.avgPowerUsage;
+
+        const tps = tpsData.tps;
+        const mspt = tpsData.mspt;
+
+        const eu = lscData.eu;
+        const euIn = lscData.euIn;
+        const euOut = lscData.euOut;
 
         const client = await createAdminClient();
 
@@ -38,7 +51,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         const insert_id = insert.data[0].id;
 
-        await client.from("stats").insert({ avg_power_injection, stored_power, avg_power_use, insert_id });
+        await client.from("stats").insert({
+            insert_id,
+            tps,
+            mspt,
+            eu,
+            euIn,
+            euOut,
+        });
 
         // truncate cpus
         await client.from("cpus").delete().neq("id", -1)
