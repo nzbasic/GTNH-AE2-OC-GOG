@@ -4,6 +4,7 @@ import { fetchCPUs, fetchLatestType } from "@/util/supabase/fetch";
 import { cookies } from "next/headers";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
+import { redirect } from "next/navigation";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
