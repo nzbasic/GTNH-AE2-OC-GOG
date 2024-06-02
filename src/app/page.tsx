@@ -40,6 +40,9 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
     const fluids = network?.fluids ?? [];
 
     if (!items || !items.length || !stats) {
+        if (!items) console.error('items is missing')
+        if (!stats) console.error('stats is missing')
+        console.error('there was a problem')
         return (
             <div>
                 There was a problem loading the items. Please try again later.
