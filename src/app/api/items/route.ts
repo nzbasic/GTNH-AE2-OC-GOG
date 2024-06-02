@@ -28,8 +28,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         await client.from('items').insert(items.map(item => ({ ...item, insert_id })));
 
-        await clean();
-
         return NextResponse.json('ok');
     } catch(e: any) {
         return NextResponse.json(e?.message, { status: 500 });

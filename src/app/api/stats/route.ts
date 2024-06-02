@@ -54,12 +54,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
             storage: cpu.storage,
         })));
 
-        try {
-            await clean()
-        } catch(e) {
-            console.error(e);
-        }
-
         return NextResponse.json('ok');
     } catch(e: any) {
         return NextResponse.json(e?.message, { status: 500 });
