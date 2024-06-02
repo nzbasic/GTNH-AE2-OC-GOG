@@ -40,6 +40,7 @@ export default function Stats({ initialData }: Props) {
         const peak = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const low = { in: Infinity, out: Infinity, diff: Infinity, total: Infinity, mspt: Infinity, tps: Infinity }
         const current = filtered[filtered.length - 1]
+        current.tps = Number(current.tps.toFixed(1));
         const status: Record<string, CardVariant> = { in: 'neutral', out: 'neutral', diff: 'neutral', total: 'neutral', mspt: 'neutral', tps: 'neutral' }
 
         filtered.forEach((d) => {
@@ -72,9 +73,10 @@ export default function Stats({ initialData }: Props) {
         avg.total /= length;
         avg.mspt /= length;
         avg.tps /= length;
+        avg.tps = Number(avg.tps.toFixed(1));
 
         if (current.tps < 20 || avg.tps < 20) status.tps = 'warning';
-        if (current.tps < 15 || avg.tps < 20) status.tps = 'danger';
+        if (current.tps < 19 || avg.tps < 19) status.tps = 'danger';
         if (current.euDiff < 0) status.diff = 'danger';
         if (current.mspt > 50 || avg.mspt > 50) status.mspt = 'danger';
         if (avg.mspt > 40) status.mspt = 'warning';
@@ -169,6 +171,7 @@ export default function Stats({ initialData }: Props) {
                     low={low.tps}
                     peak={peak.tps}
                     status={status.tps}
+                    formatter={(n) => n.toFixed(1)}
                 />
             </div>
 
