@@ -1,29 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { CPUItem, CPURow, FlatJoinedItemRow, ItemRow, JoinedItemRow, ParsedCPURow } from "@/types/supabase";
+import { FlatJoinedItemRow, Stats } from "@/types/supabase";
 import { DateTime } from "luxon";
-
-function mapStringToItems(string: string): CPUItem[] {
-    if (!string) return [];
-    if (string == '') return [];
-
-    // form = "item_name~quantity;"
-    const items = string.split(";")?.map(item => {
-        const [item_name, quantity] = item.split("~");
-        return { item_name, quantity: parseInt(quantity) };
-    }) ?? [];
-
-    return items.filter(i => i.item_name);
-}
-
-function parseCPURow(cpu: CPURow): ParsedCPURow {
-    return {
-        ...cpu,
-        active_items: typeof cpu.active_items === "string" ? mapStringToItems(cpu.active_items) : cpu.active_items,
-        stored_items: typeof cpu.stored_items === "string" ? mapStringToItems(cpu.stored_items) : cpu.stored_items,
-        final_output: typeof cpu.final_output === "string" ? mapStringToItems(cpu.final_output)[0] : cpu.final_output,
-        pending_items: typeof cpu.pending_items === "string" ? mapStringToItems(cpu.pending_items) : cpu.pending_items,
-    }
-}
+import { mapJoinedItem, parseCPURow } from "./map";
 
 export async function fetchTypeFromInsert(client: SupabaseClient, insert_id: number, type: string, select: string = "*") {
     const res = await client.from(type).select(select as '*').eq("insert_id", insert_id);
@@ -73,24 +51,20 @@ export async function fetchCPUs(client: SupabaseClient) {
     return data.map(parseCPURow);
 }
 
-export function subscribeToInserts(client: SupabaseClient, fn: (insert_id: number, type: string) => void) {
-    return client
-        .channel("inserts")
-        .on(
-            "postgres_changes",
-            { event: "INSERT", schema: "public", table: "inserts" },
-            (row) => fn(row.new.id, row.new.type)
-        )
-        .subscribe();
-}
+export async function fetchStats(client: SupabaseClient, after = DateTime.now().minus({ hours: 1 }).toISO()) {
+    const { data, error } = await client.from("stats").select("*, inserts!inner(*)").gt("inserts.created_at", after).order("insert_id", { ascending: false })
+    if (!data) return;
 
-export const mapJoinedItem = (item: JoinedItemRow) => {
-    return {
-        ...item,
-        ...item.inserts,
-        date: DateTime.fromISO(item.inserts.created_at).toFormat("dd/MM HH:mm"),
-        [item.item_name]: item.quantity,
-    }
+    const mapped = (data ?? []).map(mapJoinedItem) as unknown as Stats[];
+
+    const sorted = mapped.toSorted((a, b) => DateTime.fromISO(a.created_at).toMillis() - DateTime.fromISO(b.created_at).toMillis());
+
+    const withDiff = sorted.map((stat, i) => ({
+        ...stat,
+        euDiff: stat.euIn - stat.euOut
+    }));
+
+    return withDiff;
 }
 
 export async function fetchItem(client: SupabaseClient, item: string, after = DateTime.now().minus({ hours: 1 }).toISO()) {
@@ -117,43 +91,4 @@ export async function fetchItems(client: SupabaseClient) {
     if (!data) return;
 
     return data;
-}
-
-export function subscribeToItems(client: SupabaseClient, fn: (items: ItemRow[]) => void) {
-    const wrapped = (insert_id: string) => {
-        fetchTypeFromInsert(client, parseInt(insert_id), "items").then(fn);
-    };
-
-    const channel = client
-        .channel("items_inserts")
-        .on(
-            "postgres_changes",
-            { event: "INSERT", schema: "public", table: "inserts", filter: 'type=eq.items' },
-            (row) => wrapped(row.new.id)
-        )
-        .subscribe();
-
-    return channel;
-}
-
-export function subscribeToItem(client: SupabaseClient, item: string, fn: (item: ItemRow) => void) {
-    return client
-        .channel(item)
-        .on(
-            "postgres_changes",
-            { event: "INSERT", schema: "public", table: "items", filter: 'item_name=eq.' + item },
-            (row: { new: ItemRow }) => fn(row.new)
-        )
-        .subscribe();
-}
-
-export function subscribeToCPU(client: SupabaseClient, name: string, fn: (cpu: ParsedCPURow) => void) {
-    return client
-        .channel("cpus")
-        .on(
-            "postgres_changes",
-            { event: "INSERT", schema: "public", table: "cpus", filter: 'name=eq.' + name },
-            (row: { new: CPURow }) => fn(parseCPURow(row.new))
-        )
-        .subscribe();
 }

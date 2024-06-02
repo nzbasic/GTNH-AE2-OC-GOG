@@ -2,12 +2,13 @@
 
 import { ParsedCPURow } from "@/types/supabase"
 import { createClient } from "@/util/supabase/client";
-import { fetchCPU, subscribeToCPU } from "@/util/supabase/fetch";
+import { fetchCPU } from "@/util/supabase/fetch";
 import { useEffect, useState } from "react";
 import cn from 'classnames';
 import { toAEUnit } from "@/util/unit";
 import { formatName } from "@/util/ae2";
 import Refresh from "./refresh";
+import { subscribeToCPU } from "@/util/supabase/subscribe";
 
 type Props = {
     name: string;

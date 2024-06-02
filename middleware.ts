@@ -5,6 +5,15 @@ import { updateSession } from "@/util/supabase/middleware";
 export async function middleware(request: NextRequest) {
     const url = request.nextUrl;
 
+    if (url.pathname.startsWith('/api/cron')) {
+        const authHeader = request.headers.get('authorization');
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return new Response('Unauthorized', {
+                status: 401,
+            });
+        }
+    }
+
     // Only apply this middleware to /api routes
     if (url.pathname.startsWith('/api')) {
         const token = request.headers.get('x-secret');

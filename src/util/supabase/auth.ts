@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 
-async function login() {
+export async function login() {
     "use server"
 
     const cookieStore = cookies();
@@ -20,7 +20,7 @@ async function login() {
     return redirect(data.url)
 }
 
-async function logout() {
+export async function logout() {
     "use server"
 
     const cookieStore = cookies();
@@ -35,7 +35,7 @@ async function logout() {
     redirect("/")
 }
 
-async function getMCName(code: string) {
+export async function getMCName(code: string) {
     "use server"
 
     const cookieStore = cookies();

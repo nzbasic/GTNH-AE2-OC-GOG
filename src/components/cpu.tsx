@@ -1,4 +1,4 @@
-import { Card } from "./ui/card";
+import Card from "./card";
 import cn from 'classnames';
 import { toAEUnit } from "@/util/unit";
 import { ParsedCPURow } from "@/types/supabase";
@@ -27,7 +27,7 @@ export default function CPU({ cpu, refreshing }: Props) {
     return (
         <div className="bg-card">
             <Card
-                className={cn('flex flex-col items-start w-full gap-1 rounded-sm shadow-sm p-2 text-xs',
+                className={cn('flex flex-col w-full items-start gap-1 p-2',
                     { 'hover:brightness-95 dark:hover:brightness-110': cpu.busy },
                     { 'bg-green-500/5 dark:bg-green-900 border-green-300 dark:border-green-500': status === 'active' },
                     { 'bg-orange-100 dark:bg-orange-900 border-orange-300 dark:border-orange-500': status === 'stalled' }

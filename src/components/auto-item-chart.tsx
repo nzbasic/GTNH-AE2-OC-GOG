@@ -2,10 +2,8 @@
 
 import { FlatJoinedItemRow } from "@/types/supabase"
 import { createClient } from "@/util/supabase/client";
-import { subscribeToItem } from "@/util/supabase/fetch";
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
-import LineChartHero from "./chart";
 import {
     Select,
     SelectContent,
@@ -13,6 +11,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import MultiLineChart from "./multi-chart";
+import { subscribeToItem } from "@/util/supabase/subscribe";
 
 type Props = {
     initialData: FlatJoinedItemRow[];
@@ -71,7 +71,7 @@ export default function AutoItemChart({ initialData, name, size }: Props) {
                 </SelectContent>
             </Select>
 
-            <LineChartHero data={memoData} name={name} size={size} />
+            <MultiLineChart data={memoData} names={[name]} size={size} />
         </div>
     )
 }

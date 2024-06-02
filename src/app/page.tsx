@@ -1,10 +1,12 @@
 import { createClient } from "@/util/supabase/server";
 import React from "react";
-import { fetchCPUs, fetchLatestType } from "@/util/supabase/fetch";
+import { fetchCPUs, fetchLatestType, fetchStats } from "@/util/supabase/fetch";
 import { cookies } from "next/headers";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
-import { redirect } from "next/navigation";
+import { clean } from "@/util/supabase/clean";
+import { getMCName, login } from "@/util/supabase/auth";
+import Stats from "@/components/stats";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
@@ -21,22 +23,38 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
     const client = createClient(cookieStore);
 
     if (code) {
-
+        await getMCName(code)
     }
 
-    const network = await fetchLatestType(client, "items");
+    const all = await Promise.all([
+        fetchLatestType(client, "items"),
+        fetchCPUs(client),
+        fetchStats(client)
+    ])
+
+    const network = all[0];
+    const cpus = all[1];
+    const stats = all[2];
 
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];
 
-    if (!items || !items.length) {
-        redirect("/");
+    if (!items || !items.length || !stats) {
+        return (
+            <div>
+                There was a problem loading the items. Please try again later.
+            </div>
+        )
     }
-
-    const cpus = await fetchCPUs(client)
 
     return (
         <>
+            {/* <form>
+                <Button formAction={login}>Login</Button>
+            </form> */}
+
+            <Stats initialData={stats} />
+
             <CraftingStatus initialData={cpus} />
 
             <DynamicFavourites  />

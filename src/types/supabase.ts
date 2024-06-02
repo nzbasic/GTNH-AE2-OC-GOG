@@ -79,3 +79,14 @@ export type Meteor = {
     cost: number;
     contents: MeteorItem[];
 }
+
+export type Stats = {
+    id: number;
+    created_at: string;
+    eu: string;
+    euIn: number;
+    euOut: number;
+    euDiff: number;
+    mspt: number;
+    tps: number;
+}
