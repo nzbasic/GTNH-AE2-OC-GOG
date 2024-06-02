@@ -62,11 +62,13 @@ export const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favour
 
     return (
         <div ref={ref} className="flex flex-col gap-1">
-            <div className="flex justify-between">
-                <Link className="flex gap-2 text-sm select-none" href={`/items/${name}`}>
-                    <p className="font-medium">{formatName(name)}</p>
+            <div className="flex justify-between gap-x-2">
+                <Link className="flex gap-2 text-sm select-none min-w-0" href={`/items/${name}`}>
+                    <span className="truncate font-medium">
+                        {formatName(name)}
+                    </span>
                     {last && (
-                        <p>{toAEUnit(data[data.length - 1]?.quantity)}</p>
+                        <span>{toAEUnit(data[data.length - 1]?.quantity)}</span>
                     )}
                 </Link>
 
