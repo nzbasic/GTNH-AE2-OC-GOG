@@ -29,7 +29,7 @@ import { Meteor, MeteorItem } from '@/types/supabase';
             });
         }
 
-        const meteor: Omit<Meteor, 'id' | 'created_at'> = {
+        const meteor = {
             name: file.replace('.json', ''),
             cost: info.cost,
             radius: info.radius,
