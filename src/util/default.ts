@@ -1,1 +1,1 @@
-export const defaultFavs = ["drop of Cetane-Boosted Diesel", "drop of Chlorine", "drop of Sulfuric Acid", "Platinum Dust", "Osmium Dust"]
+export const defaultFavs = ["drop of CN3H7O3 Rocket Fuel", "drop of Cetane-Boosted Diesel", "Platinum Dust", "Osmium Dust", "Naquadah Dust", "Infinity Catalyst Dust", "Samarium Dust", "Americium Dust"]
