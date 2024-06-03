@@ -34,13 +34,13 @@ export default function CPU({ cpu, refreshing }: Props) {
                 )}
                 key={cpu.id}
             >
-                <p >CPU {cpu.name === '' ? 'Unnamed' : cpu.name} {!cpu.busy && '(idle)'}</p>
+                <p>CPU {cpu.name === '' ? 'Unnamed' : cpu.name} {!cpu.busy && '(idle)'}</p>
 
                 {refreshing ? (
                     <p>Refreshing...</p>
                 ) : (
                     cpu.final_output ? (
-                        <p className="italic">{formatName(cpu.final_output.item_name)} x{cpu.final_output.quantity}</p>
+                        <p className="italic truncate w-full">{formatName(cpu.final_output.item_name)} x{cpu.final_output.quantity}</p>
                     ) : (
                         <p className="italic">{toAEUnit(cpu.storage)}</p>
                     )
