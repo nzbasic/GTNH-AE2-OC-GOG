@@ -15,9 +15,9 @@ export async function GET(req: NextRequest) {
     }));
 
     // convert to object with index as keys
-    const object = mapped.reduce((acc, cur, i) => ({ ...acc, [i]: cur }), {});
+    // const object = mapped.reduce((acc, cur, i) => ({ ...acc, [i]: cur }), {});
 
-    return new Response(JSON.stringify(object), { headers: { 'content-type': 'application/json' } });
+    return new Response(JSON.stringify(mapped), { headers: { 'content-type': 'application/json' } });
 }
 
 // POST /api/instructions
