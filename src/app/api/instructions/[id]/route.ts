@@ -14,6 +14,12 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
 
     const body = await req.json();
 
+    if (body.status == "crafting") {
+        body.started_at = new Date().toISOString();
+    } else if (body.status == "failed" || body.status == "done") {
+        body.ended_at = new Date().toISOString();
+    }
+
     await client.from('instructions').update(body).eq('id', context.params.id);
 
     return new Response('ok');
