@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Get all instructions
 export async function GET(req: NextRequest) {
     const client = await createAdminClient();
-    const instructions = await client.from('instructions').update({ status: 'assigning' }).eq('status', 'awaiting-assignment').select('*');
+    const instructions = await client.from('instructions').select('*').eq('status', 'awaiting-assignment');
 
     const data: Instruction[] = instructions.data ?? []
     const mapped = data.map(request => ({
