@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/util/supabase/server";
 import { createAdminClient } from "@/util/supabase/service_worker";
 
 // GET /api/instructions/{id}

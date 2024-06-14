@@ -1,5 +1,4 @@
 import { createClient } from "@/util/supabase/server";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -10,15 +9,20 @@ export async function GET(request: Request) {
     const code = requestUrl.searchParams.get("code");
     const origin = requestUrl.origin;
 
-    console.log('callback called', code, requestUrl.searchParams)
-
     if (code) {
-        const cookieStore = cookies();
-        const supabase = createClient(cookieStore);
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        const client = createClient();
+        const { data, error } = await client.auth.exchangeCodeForSession(code);
 
-        console.log(error);
-        console.log(data);
+        if (!error) {
+            const user = await client.auth.getUser(data.session.access_token);
+
+            const metadata = user?.data.user?.user_metadata
+
+            // @ts-ignore
+            if (!metadata.minecraftName) {
+                return NextResponse.redirect(`${origin}/auth/minecraft`)
+            }
+        }
     }
 
     // URL to redirect to after sign up process completes

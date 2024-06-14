@@ -7,7 +7,9 @@ export async function middleware(request: NextRequest) {
 
     if (url.pathname.startsWith('/api/cron')) {
         const authHeader = request.headers.get('authorization');
-        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        const token = request.headers.get('x-secret');
+
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && !token) {
             return new Response('Unauthorized', {
                 status: 401,
             });

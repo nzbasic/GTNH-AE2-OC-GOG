@@ -1,12 +1,11 @@
 import { createClient } from "@/util/supabase/server";
 import React from "react";
 import { fetchCPUs, fetchLatestType, fetchStats } from "@/util/supabase/fetch";
-import { cookies } from "next/headers";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
 import { clean } from "@/util/supabase/clean";
-import { getMCName, login } from "@/util/supabase/auth";
 import Stats from "@/components/stats";
+import Auth from "@/components/auth";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
@@ -18,19 +17,14 @@ const DynamicDualItemsTable = dynamic(() => import('@/components/dual-items-tabl
 
 export const revalidate = 10;
 
-export default async function Home({ searchParams: { code } }: { searchParams: { code?: string } }) {
-    const cookieStore = cookies();
-    const client = createClient(cookieStore);
-
-    if (code) {
-        await getMCName(code)
-    }
+export default async function Home() {
+    const client = createClient();
 
     const all = await Promise.all([
         fetchLatestType(client, "items"),
         fetchCPUs(client),
         fetchStats(client)
-    ])
+    ]);
 
     const network = all[0];
     const cpus = all[1];
@@ -38,6 +32,8 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
 
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];
+
+    // clean();
 
     if (!items || !items.length || !stats) {
         if (!items) console.error('items is missing')
@@ -52,9 +48,7 @@ export default async function Home({ searchParams: { code } }: { searchParams: {
 
     return (
         <>
-            {/* <form>
-                <Button formAction={login}>Login</Button>
-            </form> */}
+            {/* <Auth /> */}
 
             <Stats initialData={stats} />
 
