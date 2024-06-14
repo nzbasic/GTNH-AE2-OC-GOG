@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
 
     const data: Instruction[] = instructions.data ?? []
     const mapped = data.map(request => ({
+        id: request.id,
         item: request.data.item,
         quantity: request.data.quantity,
     }));
