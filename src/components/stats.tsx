@@ -3,16 +3,15 @@
 import type { Stats } from "@/types/supabase";
 import { createClient } from "@/util/supabase/client";
 import { fetchStats } from "@/util/supabase/fetch";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Refresh from "./refresh";
 import { toPowerUnit } from "@/util/unit";
 import MultiLineChart from "./multi-chart";
-import { Button } from "./ui/button";
-import Card, { CardVariant } from "./card";
-import cn from 'classnames';
+import { CardVariant } from "./card";
 import StatCard from "./stat-card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { DateTime } from "luxon";
+import Threshold, { ThresholdWithParentSize } from './threshold'
 
 type Props = {
     initialData: Stats[]
@@ -106,7 +105,7 @@ export default function Stats({ initialData }: Props) {
                         <SelectItem value="5">5 Minutes</SelectItem>
                     </SelectContent>
                 </Select>
-                <StatCard
+                {/* <StatCard
                     className="order-2 lg:order-1"
                     data={filtered}
                     title="EU/t In"
@@ -115,7 +114,7 @@ export default function Stats({ initialData }: Props) {
                     low={low.in}
                     peak={peak.in}
                     status={status.in}
-                />
+                /> */}
 
                 <StatCard
                     className="order-1 lg:order-2"
@@ -128,7 +127,7 @@ export default function Stats({ initialData }: Props) {
                     status={status.total}
                 />
 
-                <StatCard
+                {/* <StatCard
                     className="order-3 lg:order-3"
                     data={filtered}
                     title="EU/t Out"
@@ -137,7 +136,7 @@ export default function Stats({ initialData }: Props) {
                     low={low.out}
                     peak={peak.out}
                     status={status.out}
-                />
+                /> */}
 
                 <StatCard
                     className="order-5 lg:order-4"
@@ -151,7 +150,7 @@ export default function Stats({ initialData }: Props) {
                     formatter={(n) => n.toFixed(2) + "ms"}
                 />
 
-                <StatCard
+                {/* <StatCard
                     className="order-4 lg:order-5"
                     data={filtered}
                     title="EU/t Difference"
@@ -160,9 +159,9 @@ export default function Stats({ initialData }: Props) {
                     low={low.diff}
                     peak={peak.diff}
                     status={status.diff}
-                />
+                /> */}
 
-                <StatCard
+                {/* <StatCard
                     className="order-6 lg:order-6"
                     data={filtered}
                     title="TPS"
@@ -172,18 +171,23 @@ export default function Stats({ initialData }: Props) {
                     peak={peak.tps}
                     status={status.tps}
                     formatter={(n) => n.toFixed(1)}
-                />
+                /> */}
             </div>
 
             <div className="flex flex-col">
-                <h2 className="text-sm font-medium pb-1 flex gap-2 items-center">EU/t In/Out/Difference</h2>
-                <MultiLineChart
-                    data={data}
-                    names={["euIn", "euOut", "euDiff"]}
-                    colors={["green", "red", "indigo"]}
-                    size="card"
-                    valueFormatter={(n) => toPowerUnit(n) + "/t"}
-                />
+                <h2 className="text-sm font-medium pb-1 flex gap-2 items-center">EU/t In/Out</h2>
+                <div className="lg:hidden">
+                    <MultiLineChart
+                        data={data}
+                        names={["euIn", "euOut", "euDiff"]}
+                        colors={["green", "red", "indigo"]}
+                        size="card"
+                        valueFormatter={(n) => toPowerUnit(n) + "/t"}
+                    />
+                </div>
+                <div className="hidden lg:block w-full h-72 bg-card rounded-sm shadow-sm border">
+                    <ThresholdWithParentSize data={data} />
+                </div>
             </div>
         </div>
     )
