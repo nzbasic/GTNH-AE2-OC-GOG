@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createFetch } from "./next";
 
 export function createClient() {
     const cookieStore = cookies();

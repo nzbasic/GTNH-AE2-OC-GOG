@@ -1,11 +1,9 @@
-import { createClient } from "@/util/supabase/server";
 import React from "react";
 import { fetchCPUs, fetchLatestType, fetchStats } from "@/util/supabase/fetch";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
-import { clean } from "@/util/supabase/clean";
 import Stats from "@/components/stats";
-import Auth from "@/components/auth";
+import { createAdminClient } from "@/util/supabase/service_worker";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
@@ -15,10 +13,10 @@ const DynamicDualItemsTable = dynamic(() => import('@/components/dual-items-tabl
     ssr: false,
 })
 
-export const revalidate = 10;
+export const revalidate = 60;
 
 export default async function Home() {
-    const client = createClient();
+    const client = await createAdminClient();
 
     const all = await Promise.all([
         fetchLatestType(client, "items"),

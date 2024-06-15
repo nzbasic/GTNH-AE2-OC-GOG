@@ -1,6 +1,6 @@
-import { createClient } from "@/util/supabase/client"
 import { fetchCPU } from "@/util/supabase/fetch"
 import CPUItems from "@/components/cpu-items"
+import { createAdminClient } from "@/util/supabase/service_worker"
 
 type Props = {
     params: {
@@ -8,12 +8,12 @@ type Props = {
     }
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function CPU({ params: { name_uri } }: Props) {
     const name = decodeURIComponent(name_uri)
 
-    const client = createClient()
+    const client = await createAdminClient()
     const data = await fetchCPU(client, name);
 
     if (!data) return (
