@@ -6,8 +6,12 @@ import React from "react";
 import { arrayMoveImmutable } from 'array-move';
 import SortableList, { SortableItem } from "react-easy-sort";
 import { Favourite } from "./favourite-chart";
+import { createClient } from "@/util/supabase/client";
+import { fetchItems } from "@/util/supabase/fetch";
+import { FlatJoinedItemRow } from "@/types/supabase";
 
 export default function Favourites() {
+    const [initialData, setInitialData] = React.useState<Record<string, FlatJoinedItemRow[]>>()
     const [favourites, setFavourites] = useLocalStorage('favourites', defaultFavs)
 
     function onSortEnd(oldIndex: number, newIndex: number) {
@@ -17,6 +21,17 @@ export default function Favourites() {
     function removeFavourite(name: string) {
         setFavourites((array) => array.filter(fav => fav !== name));
     }
+
+    const fetchFavourites = React.useCallback(async function fetchFavourites() {
+        const client = createClient();
+        const items = await fetchItems(client, favourites)
+
+        setInitialData(items);
+    }, []);
+
+    React.useEffect(() => {
+        fetchFavourites();
+    }, [fetchFavourites]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -30,7 +45,7 @@ export default function Favourites() {
                 >
                     {favourites.map(fav => (
                         <SortableItem key={fav}>
-                            <Favourite key={fav} name={fav} remove={() => removeFavourite(fav)} />
+                            <Favourite name={fav} remove={() => removeFavourite(fav)} initialData={initialData?.[fav] ?? []} />
                         </SortableItem>
                     ))}
                 </SortableList>

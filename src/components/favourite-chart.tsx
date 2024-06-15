@@ -13,11 +13,14 @@ import MultiLineChart from "./multi-chart";
 type Props = {
     name: string;
     remove: () => void;
+    initialData: FlatJoinedItemRow[];
 }
 
-export const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favourite({ name, remove }: Props, ref) {
-    const [data, setData] = useState([] as FlatJoinedItemRow[]);
+export const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favourite({ name, remove, initialData }: Props, ref) {
+    const [data, setData] = useState(initialData);
     const [refreshing, setRefreshing] = useState(false);
+
+    useEffect(() => setData(initialData), [initialData]);
 
     async function refresh() {
         setRefreshing(true);
@@ -28,31 +31,6 @@ export const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favour
         setData(res ?? []);
         setRefreshing(false);
     }
-
-    useEffect(() => {
-        refresh()
-
-        // const listener = subscribeToItem(client, name, async (item) => {
-        //     const { data, error } = await client.from("inserts").select("*").eq("id", item.insert_id).single();
-        //     if (error) {
-        //         console.error(error);
-        //         return;
-        //     }
-
-        //     const mapped = {
-        //         ...item,
-        //         ...data,
-        //         date: DateTime.fromISO(data.created_at).toLocal().toFormat("HH:mm:ss"),
-        //         [item.item_name]: item.quantity,
-        //     }
-
-        //     setData(prev => [...prev, mapped]);
-        // });
-
-        // return () => {
-        //     listener.unsubscribe();
-        // }
-    }, []);
 
     const first = data[0];
     const last = data[data.length - 1];

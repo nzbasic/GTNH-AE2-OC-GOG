@@ -86,9 +86,22 @@ export async function fetchCPU(client: SupabaseClient, name: string) {
     return parseCPURow(data);
 }
 
-export async function fetchItems(client: SupabaseClient) {
-    const { data, error } = await client.from("items").select("*");
+export async function fetchItems(client: SupabaseClient, items: string[], after = DateTime.now().minus({ hours: 1 }).toISO()) {
+    const { data, error } = await client.from("items").select("*, inserts!inner(*)").in("item_name", items).gt("inserts.created_at", after).order("insert_id", { ascending: false })
     if (!data) return;
 
-    return data;
+    const reduced: Record<string, FlatJoinedItemRow[]> = data.reduce((acc, item) => {
+        if (!acc[item.item_name]) acc[item.item_name] = [];
+        acc[item.item_name].push(mapJoinedItem(item));
+        return acc;
+    }, {} as Record<string, FlatJoinedItemRow[]>);
+
+    for (const key in reduced) {
+        const mapped = reduced[key]
+        const sorted = mapped.toSorted((a, b) => DateTime.fromISO(a.created_at).toMillis() - DateTime.fromISO(b.created_at).toMillis());
+
+        reduced[key] = sorted;
+    }
+
+    return reduced;
 }
