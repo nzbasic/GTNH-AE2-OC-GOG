@@ -138,11 +138,11 @@ export async function clean() {
 
     await cleanInserts(supabase, now, hourAgo, dayAgo);
 
-    const craftRes = await supabase.from("crafts").select('*').eq('save', false)
+    const craftRes = await supabase.from("crafts").select('*').not('ended_at', 'is', null).eq('save', false)
     if (craftRes.data) {
         const crafts = craftRes.data
         for (const craft of crafts) {
-            await supabase.from("crafts").delete().eq("id", craft.id)
+            await supabase.from("item_crafting_status").delete().eq("craft_id", craft.id)
         }
     }
 
