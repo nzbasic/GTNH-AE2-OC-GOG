@@ -137,6 +137,15 @@ export async function clean() {
     const hourAgo = now.minus({ hours: 1 });
 
     await cleanInserts(supabase, now, hourAgo, dayAgo);
+
+    const craftRes = await supabase.from("crafts").select('*').eq('save', false)
+    if (craftRes.data) {
+        const crafts = craftRes.data
+        for (const craft of crafts) {
+            await supabase.from("crafts").delete().eq("id", craft.id)
+        }
+    }
+
     // await cleanLSC(supabase, now, hourAgo, dayAgo);
 
     console.log('clean done')
