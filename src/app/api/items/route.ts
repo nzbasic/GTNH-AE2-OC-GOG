@@ -1,5 +1,4 @@
 import { OCItems } from "@/types/oc";
-import { clean } from "@/util/supabase/clean";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
 

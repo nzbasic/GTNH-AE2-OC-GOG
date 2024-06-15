@@ -47,3 +47,5 @@ export type OCMachines = {
         [address: string]: string;
     }
 }
+
+export type OCCraftables = Record<string, string>;

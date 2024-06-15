@@ -60,11 +60,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
             euOut,
         });
 
-        // truncate cpus
-        await client.from("cpus").delete().neq("id", -1)
+        const cpuRes = await client.from("cpus").select("*");
+        const cpuData = cpuRes.data ?? [];
 
-        // insert cpus
-        await client.from("cpus").insert(cpus.map(cpu => ({
+        const mappedCPUs = cpus.map(cpu => ({
             name: cpu.name,
             busy: cpu.busy,
             final_output: typeof cpu.finalOutput === "string" ? mapStringToItems(cpu.finalOutput)[0] : cpu.finalOutput,
@@ -72,7 +71,24 @@ export async function POST(req: NextRequest, res: NextResponse) {
             active_items: typeof cpu.activeItems === "string" ? mapStringToItems(cpu.activeItems) : cpu.activeItems,
             stored_items: typeof cpu.storedItems === "string" ? mapStringToItems(cpu.storedItems) : cpu.storedItems,
             storage: cpu.storage,
-        })));
+        }));
+
+        const toInsert = mappedCPUs.filter(cpu => !cpuData.find(c => c.name === cpu.name));
+        const toUpdate = mappedCPUs.filter(cpu => cpuData.find(c => c.name === cpu.name));
+        const toDelete = cpuData.filter(cpu => !mappedCPUs.find(c => c.name === cpu.name));
+
+        await client.from("cpus").insert(toInsert);
+        await Promise.all(toUpdate.map(async cpu => {
+            const existing = cpuData.find(c => c.name === cpu.name);
+            if (!existing) return;
+            const id = existing.id;
+            await client.from("cpus").update(cpu).match({ id });
+        }));
+
+        await Promise.all(toDelete.map(async cpu => {
+            const id = cpu.id;
+            await client.from("cpus").delete().match({ id });
+        }));
 
         return NextResponse.json('ok');
     } catch(e: any) {
