@@ -119,7 +119,7 @@ export const config = {
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
                 "tremor-small": "0.375rem",
-                "tremor-default": "0.5rem",
+                "tremor-default": "calc(var(--radius) - 4px)",
                 "tremor-full": "9999px",
             },
             boxShadow: {

@@ -52,7 +52,7 @@ export default function CraftingStatus({ initialData }: { initialData: ParsedCPU
                 {cpus.map(cpu => (
                     <React.Fragment key={cpu.id}>
                         {cpu.busy ? (
-                            <Link href={`/cpus/${cpu.name}`}>
+                            <Link href={`/crafts/${cpu.craft_id}`}>
                                 <CPU cpu={cpu} refreshing={refreshing} />
                             </Link>
                         ) : (

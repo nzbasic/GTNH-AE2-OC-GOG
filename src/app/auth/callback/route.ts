@@ -15,11 +15,13 @@ export async function GET(request: Request) {
 
         if (!error) {
             const user = await client.auth.getUser(data.session.access_token);
+            const uid = user.data.user?.id
 
-            const metadata = user?.data.user?.user_metadata
+            const mcAuth = await client.from('mc_auth').select('*').eq('uid', uid).single();
+            const username = mcAuth.data?.username
 
             // @ts-ignore
-            if (!metadata.minecraftName) {
+            if (!username) {
                 return NextResponse.redirect(`${origin}/auth/minecraft`)
             }
         }

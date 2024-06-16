@@ -1,3 +1,5 @@
+"use server"
+
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 import { headers } from "next/headers";
@@ -44,12 +46,17 @@ export async function mcAuth() {
     const user = await client.auth.getUser();
 
     const isLoggedIn = !user.error && !!user.data;
-    const metadata = user.data?.user?.user_metadata;
-    const username = metadata?.minecraftName as (string | undefined)
+    let username: string;
+    let onWhitelist = false;
 
     const adminClient = await createAdminClient();
-    const { data, error } = await adminClient.from("auth").select("username").eq("username", username).single();
-    const onWhitelist = !error && data.username === username;
+    const { data, error } = await adminClient.from('mc_auth').select('*').eq('uid', user.data.user?.id).single();
+    username = data?.username;
+
+    if (username) {
+        const { data, error } = await adminClient.from("auth").select("username").eq("username", username).single();
+        onWhitelist = !error && data.username === username;
+    }
 
     return {
         isLoggedIn,

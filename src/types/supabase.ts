@@ -55,6 +55,7 @@ export type ParsedCPURow = {
     pending_items: CPUItem[];
     final_output: CPUItem;
     started_at?: string;
+    craft_id?: number;
 }
 
 export type Instruction = {
@@ -90,4 +91,31 @@ export type Stats = {
     euDiff: number;
     mspt: number;
     tps: number;
+}
+
+export type ItemHistoryPoint = {
+    id: number;
+    created_at: string;
+    item_name: string;
+    active_count: number;
+    stored_count: number;
+    pending_count: number;
+    craft_id: number;
+}
+
+export type ReducedItemHistoryPoint = {
+    created_at: string;
+    active_count: number;
+    stored_count: number;
+    pending_count: number;
+};
+
+export type CraftRow = {
+    id: number;
+    created_at: string;
+    ended_at: string;
+    save: boolean;
+    item_name: string;
+    quantity: number;
+    cpu_name: string;
 }

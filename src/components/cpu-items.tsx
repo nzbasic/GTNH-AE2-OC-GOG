@@ -1,37 +1,47 @@
 "use client"
 
-import { ParsedCPURow } from "@/types/supabase"
+import { CraftRow, ParsedCPURow, ReducedItemHistoryPoint } from "@/types/supabase"
 import { createClient } from "@/util/supabase/client";
-import { fetchCPU } from "@/util/supabase/fetch";
-import { useEffect, useState } from "react";
-import cn from 'classnames';
-import { toAEUnit } from "@/util/unit";
-import { formatName } from "@/util/ae2";
+import { fetchCPU, fetchCPUItemHistory, fetchCraftItemHistory } from "@/util/supabase/fetch";
+import React, { useEffect, useState } from "react";
 import Refresh from "./refresh";
 import { subscribeToCPU } from "@/util/supabase/subscribe";
+import CpuCurrentItems from "./cpu-current-items";
+import CraftItemTotal from "./craft-item-total";
+import CraftItemHistory from "./craft-item-history";
+import { DateTime } from "luxon";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
+import { toast } from "sonner"
+import { mcAuth } from "@/util/supabase/auth";
+import { toggleSaveCraft } from "@/util/supabase/update";
 
 type Props = {
-    name: string;
     initialData: ParsedCPURow;
+    initialItemHistory: Record<string, ReducedItemHistoryPoint[]>;
+    craft: CraftRow;
 }
 
-export default function CPUItems({ name, initialData }: Props) {
-    const [output, setOutput] = useState(initialData.final_output)
-    const [items, setItems] = useState(handleSetData(initialData));
-    const [refreshing, setRefreshing] = useState(false);
+export default function CPUItems({ initialData, initialItemHistory, craft }: Props) {
+    const [cpu, setCpu] = useState(initialData)
 
-    function handleSetData(data: ParsedCPURow) {
+    const [itemHistory, setItemHistory] = useState(initialItemHistory);
+
+    const [refreshingCurrent, setRefreshingCurrent] = useState(false);
+    const [refreshingHistory, setRefreshingHistory] = useState(false);
+
+    const items = React.useMemo(() => {
         const fullItemNames = [...(new Set([
-            ...data.active_items.map(i => i.item_name),
-            ...data.pending_items.map(i => i.item_name),
-            ...data.stored_items.map(i => i.item_name)
+            ...cpu.active_items.map(i => i.item_name),
+            ...cpu.pending_items.map(i => i.item_name),
+            ...cpu.stored_items.map(i => i.item_name)
         ]))].filter(Boolean);
 
         // merge active and stored items
         const items = fullItemNames.map((item_name) => {
-            const activeItem = data.active_items.find((i) => i.item_name === item_name);
-            const storedItem = data.stored_items.find((i) => i.item_name === item_name);
-            const pendingItem = data.pending_items.find((i) => i.item_name === item_name);
+            const activeItem = cpu.active_items.find((i) => i.item_name === item_name);
+            const storedItem = cpu.stored_items.find((i) => i.item_name === item_name);
+            const pendingItem = cpu.pending_items.find((i) => i.item_name === item_name);
             return {
                 item_name,
                 activeQuantity: activeItem ? activeItem.quantity : 0,
@@ -67,60 +77,104 @@ export default function CPUItems({ name, initialData }: Props) {
         });
 
         return sorted;
+    }, [cpu]);
+
+    async function handleRefreshCurrent() {
+        setRefreshingCurrent(true);
+        const client = createClient();
+        const res = await fetchCPU(client, cpu.name);
+        if (!res) return;
+        setCpu(res);
+        setRefreshingCurrent(false);
     }
 
-    async function handleRefresh() {
-        setRefreshing(true);
+    async function handleRefreshHistory() {
+        setRefreshingHistory(true);
         const client = createClient();
-        const res = await fetchCPU(client, name);
+        const res = await fetchCraftItemHistory(client, craft.id.toString());
         if (!res) return;
-        setItems(handleSetData(res));
-        setOutput(res.final_output);
-        setRefreshing(false);
+        setItemHistory(res);
+        setRefreshingHistory(false);
     }
 
     useEffect(() => {
         const client = createClient();
 
-        const listener = subscribeToCPU(client, name, async (cpu) => {
-            setItems(handleSetData(cpu));
-            setOutput(cpu.final_output)
+        const listener = subscribeToCPU(client, cpu.name, async (cpu) => {
+            setCpu(cpu);
         });
 
         return () => {
             listener.unsubscribe();
         }
-    }, []);
+    }, [cpu]);
+
+    const duration = DateTime.fromISO(craft.ended_at ?? DateTime.now().toISO()).diff(DateTime.fromISO(craft.created_at), ['hours', 'minutes', 'seconds']).toHuman({ maximumFractionDigits: 0 });
+
+    const [save, setSave] = useState(craft.save);
+    async function toggleSave(change: boolean) {
+        const prev = save;
+        setSave(change)
+
+        const { isLoggedIn, onWhitelist } = await mcAuth();
+
+        if (!isLoggedIn) {
+            toast.error("You must be logged in to save results")
+            setSave(prev)
+            return;
+        }
+
+        if (!onWhitelist) {
+            toast.error("You must be on the whitelist to save results")
+            setSave(prev)
+            return;
+        }
+
+        const error = await toggleSaveCraft(craft.id, change)
+
+        if (!error) {
+            toast.success(`Result ${save ? 'saved' : 'unsaved'}`)
+            setSave(change);
+        } else {
+            toast.error("Failed to save result")
+            setSave(prev);
+        }
+    }
 
     return (
-        <div className="flex flex-col gap-4">
-            <p>Crafting: {output.quantity}x {output.item_name}</p>
-
-            <Refresh onClick={handleRefresh} refreshing={refreshing} />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                {items.map((item, index) => (
-                    <div
-                        className={cn('flex flex-col text-xs border p-2 rounded-sm bg-card', {
-                            'bg-green-100 dark:bg-green-900 border-green-500': item.status === 'active',
-                            'bg-orange-100 dark:bg-orange-900 border-orange-500': item.status === 'pending',
-                            '': item.status === 'stored',
-                        })}
-                        key={item.item_name}
-                    >
-                        <p>{formatName(item.item_name)}</p>
-                        {item.status === 'active' && (
-                            <p>Crafting {toAEUnit(item.activeQuantity)}, Pending {toAEUnit(item.pendingQuantity)}, Stored: {toAEUnit(item.storedQuantity)}</p>
-                        )}
-                        {item.status === 'pending' && (
-                            <p>Pending {toAEUnit(item.pendingQuantity)}, Stored {toAEUnit(item.storedQuantity)}</p>
-                        )}
-                        {item.status === 'stored' && (
-                            <p>Stored {toAEUnit(item.storedQuantity)}</p>
-                        )}
-                    </div>
-                ))}
+        <>
+            <p>Crafting: {craft.quantity}x {craft.item_name}</p>
+            <p>Duration: {duration}</p>
+            <div className="flex items-center space-x-2">
+                <Label htmlFor="save" className="font-normal text-base">Save Result</Label>
+                <Switch checked={save} onCheckedChange={toggleSave} id="save" />
             </div>
-        </div>
+
+            <div className="flex flex-col gap-4 mt-4">
+                {itemHistory && (
+                    <div className="flex flex-col gap-2">
+                        <h2 className="flex items-center gap-2 font-medium">
+                            Total Active / Pending Time
+                            <Refresh onClick={handleRefreshHistory} refreshing={refreshingHistory} />
+                        </h2>
+                        <CraftItemTotal data={itemHistory} />
+
+                        <CraftItemHistory data={itemHistory} />
+                    </div>
+                )}
+
+                {cpu.busy && craft.item_name == cpu.final_output.item_name ? (
+                    <div className="flex flex-col gap-2">
+                        <h2 className="border-b text-md font-medium pb-1 flex gap-2 items-center">
+                            Crafting Status
+                            <Refresh onClick={handleRefreshCurrent} refreshing={refreshingCurrent} />
+                        </h2>
+                        <CpuCurrentItems items={items} />
+                    </div>
+                ) : (
+                    <p className="text-red-500 mt-4">CPU is not crafting this item</p>
+                )}
+            </div>
+        </>
     )
 }

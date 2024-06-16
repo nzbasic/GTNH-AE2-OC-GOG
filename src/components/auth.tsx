@@ -7,7 +7,7 @@ export default async function Auth() {
     if (isLoggedIn) {
         return (
             <form className="flex items-center gap-4">
-                <p>Hi {username}, you are {!onWhitelist && 'not'} on the whitelist!</p>
+                <p suppressHydrationWarning>Hi {username}, you are {!onWhitelist && 'not'} on the whitelist!</p>
 
                 <Button formAction={logout} variant="outline">Logout</Button>
             </form>

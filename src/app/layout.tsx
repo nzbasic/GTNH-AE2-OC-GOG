@@ -5,6 +5,8 @@ import { ThemeProvider } from "next-themes";
 import { ModeToggle } from "@/components/dark";
 import Link from "next/link";
 import cn from 'classnames';
+import { Toaster } from "@/components/ui/sonner";
+import dynamic from "next/dynamic";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,6 +14,10 @@ export const metadata: Metadata = {
     title: "GoG AE2 Stats",
     description: "A website for viewing AE2 stats for GoG",
 };
+
+const DynamicAuth = dynamic(() => import('@/components/auth'), {
+    ssr: false,
+});
 
 export default function RootLayout({
     children,
@@ -36,6 +42,8 @@ export default function RootLayout({
                         </header>
 
                         <div className="flex flex-col gap-8 flex-grow">
+                            <DynamicAuth />
+
                             {children}
                         </div>
 
@@ -43,6 +51,8 @@ export default function RootLayout({
                             <a href="https://nzbasic.com">by nzbasic</a>
                             <p className="font-bold py-4">NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
                         </footer>
+
+                        <Toaster richColors />
                     </main>
                 </ThemeProvider>
             </body>

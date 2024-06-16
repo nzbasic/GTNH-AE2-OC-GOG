@@ -1,15 +1,20 @@
 import React from "react";
-import { fetchCPUs, fetchLatestType, fetchStats } from "@/util/supabase/fetch";
+import { fetchCPUs, fetchCraftables, fetchLatestType, fetchSavedCrafts, fetchStats } from "@/util/supabase/fetch";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
 import Stats from "@/components/stats";
 import { createAdminClient } from "@/util/supabase/service_worker";
+import SavedCraftsTable from "@/components/saved-crafts";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
 })
 
 const DynamicDualItemsTable = dynamic(() => import('@/components/dual-items-table'), {
+    ssr: false,
+})
+
+const DynamicOrderItem = dynamic(() => import('@/components/order-item'), {
     ssr: false,
 })
 
@@ -21,12 +26,16 @@ export default async function Home() {
     const all = await Promise.all([
         fetchLatestType(client, "items"),
         fetchCPUs(client),
-        fetchStats(client)
+        fetchStats(client),
+        fetchSavedCrafts(client),
+        fetchCraftables(client),
     ]);
 
     const network = all[0];
     const cpus = all[1];
     const stats = all[2];
+    const savedCrafts = all[3];
+    const craftables = all[4];
 
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];
@@ -44,11 +53,13 @@ export default async function Home() {
 
     return (
         <>
-            {/* <Auth /> */}
-
             <Stats initialData={stats} />
 
+            <DynamicOrderItem initialData={craftables} />
+
             <CraftingStatus initialData={cpus} />
+
+            <SavedCraftsTable initialData={savedCrafts} />
 
             <DynamicFavourites  />
 
