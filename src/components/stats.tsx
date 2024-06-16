@@ -150,7 +150,7 @@ export default function Stats({ initialData }: Props) {
                     formatter={(n) => n.toFixed(2) + "ms"}
                 />
 
-                {/* <StatCard
+                <StatCard
                     className="order-4 lg:order-5"
                     data={filtered}
                     title="EU/t Difference"
@@ -159,9 +159,9 @@ export default function Stats({ initialData }: Props) {
                     low={low.diff}
                     peak={peak.diff}
                     status={status.diff}
-                /> */}
+                />
 
-                {/* <StatCard
+                <StatCard
                     className="order-6 lg:order-6"
                     data={filtered}
                     title="TPS"
@@ -171,7 +171,7 @@ export default function Stats({ initialData }: Props) {
                     peak={peak.tps}
                     status={status.tps}
                     formatter={(n) => n.toFixed(1)}
-                /> */}
+                />
             </div>
 
             <div className="flex flex-col">
