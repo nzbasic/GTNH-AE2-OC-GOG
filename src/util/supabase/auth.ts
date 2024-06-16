@@ -9,7 +9,7 @@ export async function login() {
     "use server"
 
     const headersList = headers();
-    const origin = headersList.get('origin') || 'http://localhost:3000';
+    const origin = headersList.get('origin') || 'https://gog.nzbasic.com/';
 
     const client = createClient();
 
