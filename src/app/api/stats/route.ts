@@ -190,7 +190,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 // from name => stats to item_name, ...stats
                 const itemArray = Array.from(itemMap).map(([item_name, stats]) => ({ item_name, craft_id: id, ...stats }));
 
-                const filteredItems = itemArray.filter(item => item.pending_count > 0 || item.active_count > 0 || item.stored_count > 0);
+                const filteredItems = itemArray.filter(item => item.pending_count > 0 || item.active_count > 0);
 
                 const { error } = await client.from("item_crafting_status").insert(filteredItems);
 
