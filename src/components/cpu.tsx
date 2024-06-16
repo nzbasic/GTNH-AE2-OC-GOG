@@ -4,6 +4,7 @@ import { toAEUnit } from "@/util/unit";
 import { ParsedCPURow } from "@/types/supabase";
 import React from "react";
 import { formatName } from "@/util/ae2";
+import { DateTime } from "luxon";
 
 type Props = {
     cpu: ParsedCPURow;
@@ -11,7 +12,7 @@ type Props = {
 }
 
 export default function CPU({ cpu, refreshing }: Props) {
-    const [status] = React.useMemo(() => {
+    const [status, duration] = React.useMemo(() => {
         if (refreshing) return ['idle'];
 
         let status = 'idle';
@@ -21,7 +22,12 @@ export default function CPU({ cpu, refreshing }: Props) {
             status = 'stalled';
         }
 
-        return [status]
+        let duration;
+        if (cpu.started_at) {
+            duration = DateTime.now().diff(DateTime.fromISO(cpu.started_at), ['hours', 'minutes', 'seconds']).toHuman({ unitDisplay: 'short', maximumFractionDigits: 0 })
+        }
+
+        return [status, duration]
     }, [cpu, refreshing])
 
     return (
@@ -34,7 +40,7 @@ export default function CPU({ cpu, refreshing }: Props) {
                 )}
                 key={cpu.id}
             >
-                <p>CPU {cpu.name === '' ? 'Unnamed' : cpu.name} {!cpu.busy && '(idle)'}</p>
+                <p>CPU {cpu.name === '' ? 'Unnamed' : cpu.name}</p>
 
                 {refreshing ? (
                     <p>Refreshing...</p>
@@ -45,6 +51,8 @@ export default function CPU({ cpu, refreshing }: Props) {
                         <p className="italic">{toAEUnit(cpu.storage)}</p>
                     )
                 )}
+
+                <p suppressHydrationWarning>{duration ?? 'Idle'}</p>
             </Card>
         </div>
     )

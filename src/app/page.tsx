@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
 import Stats from "@/components/stats";
 import { createAdminClient } from "@/util/supabase/service_worker";
-import { clean } from "@/util/supabase/clean";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
@@ -31,8 +30,6 @@ export default async function Home() {
 
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];
-
-    // clean();
 
     if (!items || !items.length || !stats) {
         if (!items) console.error('items is missing')

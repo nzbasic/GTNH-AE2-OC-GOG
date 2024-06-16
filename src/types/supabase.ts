@@ -54,6 +54,7 @@ export type ParsedCPURow = {
     stored_items: CPUItem[];
     pending_items: CPUItem[];
     final_output: CPUItem;
+    started_at?: string;
 }
 
 export type Instruction = {

@@ -4,9 +4,8 @@ import { ParsedCPURow } from "@/types/supabase";
 import React, { useState } from "react";
 import CPU from "./cpu";
 import Link from "next/link";
-import { fetchCPUs, fetchLatestType } from "@/util/supabase/fetch";
+import { fetchCPUs } from "@/util/supabase/fetch";
 import { createClient } from "@/util/supabase/client";
-import cn from 'classnames';
 import Refresh from "./refresh";
 
 function sortCpus(cpus: ParsedCPURow[]) {
@@ -40,22 +39,6 @@ export default function CraftingStatus({ initialData }: { initialData: ParsedCPU
         setCpus(sortCpus(res))
         setRefreshing(false);
     }
-
-    // useEffect(() => {
-    //     updateCpus()
-
-    //     // fetchLatestType(client, "cpus").then(res => setCpus(sortCpus(res)));
-
-    //     // const listener = subscribeToInserts(client, (id, type) => {
-    //     //     if (type === "stats") {
-    //     //         updateCpus(id);
-    //     //     }
-    //     // })
-
-    //     // return () => {
-    //     //     listener.unsubscribe();
-    //     // }
-    // }, []);
 
     return (
         <div className="flex flex-col gap-4">

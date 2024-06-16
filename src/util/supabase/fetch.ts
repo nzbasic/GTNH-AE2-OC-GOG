@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { FlatJoinedItemRow, Stats } from "@/types/supabase";
+import { FlatJoinedItemRow, ParsedCPURow, Stats } from "@/types/supabase";
 import { DateTime } from "luxon";
 import { mapJoinedItem, parseCPURow } from "./map";
 
@@ -48,7 +48,24 @@ export async function fetchCPUs(client: SupabaseClient) {
     if (!data) return [];
     if (error) console.error(error);
 
-    return data.map(parseCPURow);
+    const cpus: ParsedCPURow[] = [];
+
+    const craftsRes = await client.from("crafts").select("*").is('ended_at', null);
+    const crafts = craftsRes.data ?? [];
+
+    for (const row of data) {
+        const parsedCpu = parseCPURow(row);
+
+        const craft = crafts.find(craft => craft.cpu_name === row.name);
+
+        if (craft) {
+            parsedCpu.started_at = craft.created_at;
+        }
+
+        cpus.push(parsedCpu);
+    }
+
+    return cpus;
 }
 
 export async function fetchStats(client: SupabaseClient, after = DateTime.now().minus({ hours: 1 }).toISO()) {

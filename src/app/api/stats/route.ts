@@ -82,7 +82,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
             const existing = cpuData.find(c => c.name === cpu.name);
             if (!existing) return;
             const id = existing.id;
-            await client.from("cpus").update(cpu).match({ id });
+            await client.from("cpus").update({
+                ...cpu,
+                final_output: cpu.final_output ?? null,
+            }).match({ id });
         }));
 
         await Promise.all(toDelete.map(async cpu => {
