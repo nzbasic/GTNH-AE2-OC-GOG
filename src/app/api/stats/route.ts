@@ -191,8 +191,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 const itemArray = Array.from(itemMap).map(([item_name, stats]) => ({ item_name, craft_id: id, ...stats }));
 
                 const filteredItems = itemArray.filter(item => item.pending_count > 0 || item.active_count > 0);
+                const zeroItems = itemArray.filter(item => item.pending_count === 0 && item.active_count === 0);
 
                 const { error } = await client.from("item_crafting_status").insert(filteredItems);
+
+                // upsert zeros with condition so that we don't store multiple zeros
+                await client.from("item_crafting_status").upsert(zeroItems, { onConflict: 'item_name, pending_count, active_count, craft_id' });
 
                 if (error) console.log(error);
             }
