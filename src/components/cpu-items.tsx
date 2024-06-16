@@ -133,7 +133,7 @@ export default function CPUItems({ initialData, initialItemHistory, craft }: Pro
         const error = await toggleSaveCraft(craft.id, change)
 
         if (!error) {
-            toast.success(`Result ${save ? 'saved' : 'unsaved'}`)
+            toast.success(`Result ${change ? 'saved' : 'unsaved'}`)
             setSave(change);
         } else {
             toast.error("Failed to save result")
