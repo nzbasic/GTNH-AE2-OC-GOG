@@ -63,7 +63,7 @@ const ScheduleChart = ({ parentWidth, parentHeight, data }: Props) => {
                         {/* Pending bar */}
                         <Bar
                             x={xScale(d.start)}
-                            y={yScale(d.item) + yScale.bandwidth() / 2/3}
+                            y={(yScale(d.item) ?? 0) + yScale.bandwidth() / 2/3}
                             width={xScale(d.end) - xScale(d.start)}
                             height={yScale.bandwidth() / 1.5}
                             // fill={colorPendingFull}

@@ -27,7 +27,7 @@ export default async function CPU({ params: { id } }: Props) {
     const isActive = !!cpu.final_output;
 
     let itemHistory: Record<string, ReducedItemHistoryPoint[]> = {}
-    if (isActive) {
+    if (isActive || craft.save) {
         itemHistory = await fetchCraftItemHistory(client, id);
     }
 
