@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
-export const revalidate = 60;
+export const revalidate = Infinity;
 
 export default async function CPU({ params: { id } }: Props) {
     const client = await createAdminClient()

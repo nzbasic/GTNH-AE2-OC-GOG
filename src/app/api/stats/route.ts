@@ -2,6 +2,7 @@
 import { OCStats } from "@/types/oc";
 import { CPUItem } from "@/types/supabase";
 import { createAdminClient } from "@/util/supabase/service_worker";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 function mapStringToItems(string: string): CPUItem[] {
@@ -199,6 +200,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 await client.from("item_crafting_status").upsert(zeroItems, { onConflict: 'item_name, pending_count, active_count, craft_id' });
 
                 if (error) console.log(error);
+
+                revalidatePath('/crafts/' + id, 'page');
             }
         }
 
