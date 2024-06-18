@@ -25,7 +25,9 @@ export default function StatCard({ data, title, name, status, avg, peak, low, fo
 
                     <div className="grid grid-cols-[50px_70px]">
                         <p>Current</p>
-                        <p className="text-right font-mono">{formatter(Number(data[data.length - 1][name as keyof Stats]))}</p>
+                        {data.length && (
+                            <p className="text-right font-mono">{formatter(Number(data[data.length - 1][name as keyof Stats]))}</p>
+                        )}
 
                         <p>Average</p>
                         <p className="text-right font-mono">{formatter(avg)}</p>

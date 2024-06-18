@@ -1,4 +1,4 @@
-import AutoItemChart from "@/components/auto-item-chart"
+import AutoItemChart from "@/components/chart/auto-item-chart"
 import { FlatJoinedItemRow } from "@/types/supabase"
 import { formatName } from "@/util/ae2"
 import { DateTime } from "luxon"

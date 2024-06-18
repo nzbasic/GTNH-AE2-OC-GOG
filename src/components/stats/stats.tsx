@@ -39,8 +39,12 @@ export default function Stats({ initialData }: Props) {
         const peak = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const low = { in: Infinity, out: Infinity, diff: Infinity, total: Infinity, mspt: Infinity, tps: Infinity }
         const current = filtered[filtered.length - 1]
-        current.tps = Number(current.tps.toFixed(1));
+
         const status: Record<string, CardVariant> = { in: 'neutral', out: 'neutral', diff: 'neutral', total: 'neutral', mspt: 'neutral', tps: 'neutral' }
+
+        if (!current) return { avg, peak, low, status }
+
+        current.tps = Number(current.tps.toFixed(1));
 
         filtered.forEach((d) => {
             avg.in += d.euIn;
