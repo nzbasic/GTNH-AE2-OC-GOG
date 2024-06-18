@@ -1,10 +1,9 @@
 import React from "react";
-import { fetchCPUs, fetchCraftables, fetchLatestType, fetchSavedCrafts, fetchStats } from "@/util/supabase/fetch";
 import dynamic from 'next/dynamic'
 import CraftingStatus from "@/components/crafting-status";
 import Stats from "@/components/stats";
-import { createAdminClient } from "@/util/supabase/service_worker";
 import SavedCraftsTable from "@/components/saved-crafts";
+import { getCpusCached, getHomeCached } from "@/util/cache";
 
 const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
     ssr: false,
@@ -18,24 +17,17 @@ const DynamicOrderItem = dynamic(() => import('@/components/order-item'), {
     ssr: false,
 })
 
-export const revalidate = 60;
+export const revalidate = false
 
 export default async function Home() {
-    const client = await createAdminClient();
-
-    const all = await Promise.all([
-        fetchLatestType(client, "items"),
-        fetchCPUs(client),
-        fetchStats(client),
-        fetchSavedCrafts(client),
-        fetchCraftables(client),
-    ]);
+    const all = await getHomeCached();
 
     const network = all[0];
-    const cpus = all[1];
-    const stats = all[2];
-    const savedCrafts = all[3];
-    const craftables = all[4];
+    const stats = all[1];
+    const savedCrafts = all[2];
+    const craftables = all[3];
+
+    const cpus = await getCpusCached();
 
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];

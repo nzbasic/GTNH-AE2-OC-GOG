@@ -141,7 +141,7 @@ export async function fetchCraftItemHistory(client: SupabaseClient, id: string) 
 
     const reducedItemHistory = sorted.reduce((acc, row) => {
         if (!acc[row.item_name]) acc[row.item_name] = [];
-        acc[row.item_name].push({ created_at: row.created_at, active_count: row.active_count, pending_count: row.pending_count, stored_count: row.stored_count });
+        acc[row.item_name].push({ created_at: new Date(row.created_at).getTime(), active_count: row.active_count, pending_count: row.pending_count, stored_count: row.stored_count });
         return acc;
     }, {} as ReducedItemHistoryPoint);
 

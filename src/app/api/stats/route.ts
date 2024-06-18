@@ -200,8 +200,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 await client.from("item_crafting_status").upsert(zeroItems, { onConflict: 'item_name, pending_count, active_count, craft_id' });
 
                 if (error) console.log(error);
-
-                revalidatePath('/crafts/' + id, 'page');
             }
         }
 

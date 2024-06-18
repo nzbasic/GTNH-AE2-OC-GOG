@@ -1,8 +1,8 @@
-import { fetchCraft, fetchCraftItemHistory } from "@/util/supabase/fetch"
+import { fetchCraft } from "@/util/supabase/fetch"
 import ActiveCPUItems from "@/components/cpu-items"
 import { createAdminClient } from "@/util/supabase/service_worker"
-import { ReducedItemHistoryPoint } from "@/types/supabase"
 import { DateTime } from "luxon"
+import { getItemHistoryCached, getItemHistoryFinishedCached } from "@/util/cache"
 
 type Props = {
     params: {
@@ -10,8 +10,9 @@ type Props = {
     }
 }
 
-export const maxDuration = 60; // This function can run for a maximum of 5 seconds
-export const revalidate = Infinity;
+export const maxDuration = 60;
+export const revalidate = false;
+export const dynamic = "force-static";
 
 export default async function CPU({ params: { id } }: Props) {
     const client = await createAdminClient()
@@ -27,9 +28,11 @@ export default async function CPU({ params: { id } }: Props) {
 
     const isActive = !!cpu.final_output;
 
-    let itemHistory: Record<string, ReducedItemHistoryPoint[]> = {}
-    if (isActive || craft.save) {
-        itemHistory = await fetchCraftItemHistory(client, id);
+    let itemHistory: string
+    if (isActive) {
+        itemHistory = await getItemHistoryCached(craft.id);
+    } else if (craft.save) {
+        itemHistory = await getItemHistoryFinishedCached(craft.id);
     }
 
     const duration = DateTime.fromISO(craft.ended_at).diff(DateTime.fromISO(craft.created_at), ['hours', 'minutes', 'seconds']).toHuman({ maximumFractionDigits: 0 });
@@ -38,7 +41,7 @@ export default async function CPU({ params: { id } }: Props) {
         <div className="flex flex-col gap-2">
             <p>Crafting: {craft.item_name}</p>
             <p>CPU: {cpu.name}</p>
-            {Object.entries(itemHistory).length > 0 ? (
+            {itemHistory ? (
                 <ActiveCPUItems initialData={cpu} craft={craft} initialItemHistory={itemHistory} />
             ) : (
                 <>

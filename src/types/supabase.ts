@@ -104,7 +104,7 @@ export type ItemHistoryPoint = {
 }
 
 export type ReducedItemHistoryPoint = {
-    created_at: string;
+    created_at: number;
     active_count: number;
     stored_count: number;
     pending_count: number;

@@ -13,8 +13,8 @@ export default function CraftItemHistory({ data }: Props) {
         const initialTransform = Object.keys(data).flatMap(item => {
             const itemData = data[item];
             return itemData.map((point, index) => {
-                const start = DateTime.fromISO(point.created_at).toMillis();
-                const end = index < itemData.length - 1 ? DateTime.fromISO(itemData[index + 1].created_at).toMillis() : start + 1000;
+                const start = point.created_at
+                const end = index < itemData.length - 1 ? itemData[index + 1].created_at : start + 1000;
                 return {
                     item,
                     start,

@@ -15,17 +15,18 @@ import { Label } from "./ui/label";
 import { toast } from "sonner"
 import { mcAuth } from "@/util/supabase/auth";
 import { toggleSaveCraft } from "@/util/supabase/update";
+import { decompress } from "@/util/compress";
 
 type Props = {
     initialData: ParsedCPURow;
-    initialItemHistory: Record<string, ReducedItemHistoryPoint[]>;
+    initialItemHistory: string;
     craft: CraftRow;
 }
 
 export default function CPUItems({ initialData, initialItemHistory, craft }: Props) {
     const [cpu, setCpu] = useState(initialData)
 
-    const [itemHistory, setItemHistory] = useState(initialItemHistory);
+    const [itemHistory, setItemHistory] = useState(decompress(initialItemHistory));
 
     const [refreshingCurrent, setRefreshingCurrent] = useState(false);
     const [refreshingHistory, setRefreshingHistory] = useState(false);

@@ -1,11 +1,10 @@
 import AutoItemChart from "@/components/auto-item-chart"
 import { FlatJoinedItemRow } from "@/types/supabase"
 import { formatName } from "@/util/ae2"
-import { fetchItem } from "@/util/supabase/fetch"
 import { DateTime } from "luxon"
 import { toAEUnit } from "@/util/unit"
 import cn from 'classnames';
-import { createAdminClient } from "@/util/supabase/service_worker"
+import { getItemsCached } from "@/util/cache"
 
 type Props = {
     params: {
@@ -13,13 +12,14 @@ type Props = {
     }
 }
 
-export const revalidate = 60;
+export const revalidate = false;
+export const maxDuration = 60;
+export const dynamic = "force-static";
 
 export default async function Item({ params: { item_name_uri } }: Props) {
     const item_name = decodeURIComponent(item_name_uri)
 
-    const client = await createAdminClient()
-    const data = await fetchItem(client, item_name, DateTime.now().minus({ week: 1 }).toISO())
+    const data = await getItemsCached(item_name);
 
     if (!data) return (
         <div>
