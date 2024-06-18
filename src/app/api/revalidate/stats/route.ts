@@ -1,6 +1,8 @@
 import { getCpusCached, getHomeCached } from "@/util/cache";
 import { revalidateTag } from "next/cache";
 
+export const maxDuration = 60;
+
 export async function POST() {
     revalidateTag("stats")
 
