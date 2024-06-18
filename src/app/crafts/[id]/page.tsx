@@ -16,21 +16,21 @@ export const revalidate = false;
 export const dynamic = "force-static";
 
 export async function generateStaticParams() {
-    const toCache: { id: number }[] = []
+    const toCache: { id: string }[] = []
 
     const client = await createAdminClient();
 
     const cpus = await fetchCPUs(client)
     for (const cpu of cpus) {
         if (cpu.craft_id) {
-            toCache.push({ id: cpu.craft_id });
+            toCache.push({ id: cpu.craft_id.toString() });
         }
     }
 
     const saved = await fetchSavedCrafts(client);
     for (const craft of saved) {
-        if (!toCache.find(c => c.id === craft.id)) {
-            toCache.push({ id: craft.id });
+        if (!toCache.find(c => c.id === craft.id.toString())) {
+            toCache.push({ id: craft.id.toString() });
         }
     }
 

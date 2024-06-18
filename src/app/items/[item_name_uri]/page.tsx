@@ -12,9 +12,8 @@ type Props = {
     }
 }
 
-export const revalidate = false;
+export const revalidate = 60;
 export const maxDuration = 60;
-export const dynamic = "force-static";
 
 export default async function Item({ params: { item_name_uri } }: Props) {
     const item_name = decodeURIComponent(item_name_uri)
