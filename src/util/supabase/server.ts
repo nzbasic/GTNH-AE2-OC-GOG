@@ -35,10 +35,6 @@ export function createClient() {
                     }
                 },
             },
-            auth: {
-                autoRefreshToken: false,
-                persistSession: false,
-            }
         },
     );
 }
