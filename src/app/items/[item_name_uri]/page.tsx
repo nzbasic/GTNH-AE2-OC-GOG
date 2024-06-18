@@ -31,8 +31,8 @@ export default async function Item({ params: { item_name_uri } }: Props) {
     const reversed = data.toReversed()
 
     // find the first data point that is older than 1 hour, 1 week
-    const hour = reversed.find(d => DateTime.fromISO(d.created_at) < DateTime.now().minus({ hour: 1 }))
-    const week = reversed.find(d => DateTime.fromISO(d.created_at) < DateTime.now().minus({ week: 1 }))
+    const hour = reversed.find((d: any) => DateTime.fromISO(d.created_at) < DateTime.now().minus({ hour: 1 }))
+    const week = reversed.find((d: any) => DateTime.fromISO(d.created_at) < DateTime.now().minus({ week: 1 }))
 
     function findDiff(a?: FlatJoinedItemRow, b?: FlatJoinedItemRow) {
         if (!a || !b) return undefined
