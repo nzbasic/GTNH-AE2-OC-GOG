@@ -2,9 +2,9 @@
 
 import { CraftRow } from "@/types/supabase"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./ui/data-table"
+import { DataTable } from "../ui/data-table"
 import { toAEUnit } from "@/util/unit"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import Link from "next/link"
 import { formatName } from "@/util/ae2"
 import { DateTime } from "luxon"

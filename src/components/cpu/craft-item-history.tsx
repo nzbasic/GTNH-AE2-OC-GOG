@@ -1,6 +1,6 @@
 import { ReducedItemHistoryPoint } from "@/types/supabase"
 import { DateTime } from "luxon";
-import { ScheduleWithParentSize } from "./schedule";
+import { ScheduleWithParentSize } from "../chart/schedule";
 import React from "react";
 
 type Props = {

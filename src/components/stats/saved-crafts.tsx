@@ -5,7 +5,7 @@ import { createClient } from "@/util/supabase/client";
 import { fetchSavedCrafts } from "@/util/supabase/fetch";
 import { useState } from "react";
 import SavedCraftsTable from "./saved-crafts-table";
-import Refresh from "./refresh";
+import Refresh from "../refresh";
 
 type Props = {
     initialData: CraftRow[];

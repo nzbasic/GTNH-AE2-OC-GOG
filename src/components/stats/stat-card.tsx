@@ -1,7 +1,7 @@
 import { Stats } from "@/types/supabase";
-import Card, { CardVariant } from "./card";
+import Card, { CardVariant } from "../card";
 import { toPowerUnit } from "@/util/unit";
-import MultiLineChart from "./multi-chart";
+import MultiLineChart from "../chart/multi-chart";
 import cn from 'classnames';
 
 type Props = {

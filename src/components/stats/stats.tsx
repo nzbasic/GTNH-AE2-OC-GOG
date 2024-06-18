@@ -4,14 +4,14 @@ import type { Stats } from "@/types/supabase";
 import { createClient } from "@/util/supabase/client";
 import { fetchStats } from "@/util/supabase/fetch";
 import React, { useMemo, useState } from "react";
-import Refresh from "./refresh";
+import Refresh from "../refresh";
 import { toPowerUnit } from "@/util/unit";
-import MultiLineChart from "./multi-chart";
-import { CardVariant } from "./card";
-import StatCard from "./stat-card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import MultiLineChart from "../chart/multi-chart";
+import { CardVariant } from "../card";
+import StatCard from "../stats/stat-card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DateTime } from "luxon";
-import Threshold, { ThresholdWithParentSize } from './threshold'
+import Threshold, { ThresholdWithParentSize } from '../chart/threshold'
 
 type Props = {
     initialData: Stats[]

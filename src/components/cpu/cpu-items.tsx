@@ -4,14 +4,14 @@ import { CraftRow, ParsedCPURow, ReducedItemHistoryPoint } from "@/types/supabas
 import { createClient } from "@/util/supabase/client";
 import { fetchCPU, fetchCPUItemHistory, fetchCraftItemHistory } from "@/util/supabase/fetch";
 import React, { useEffect, useState } from "react";
-import Refresh from "./refresh";
+import Refresh from "../refresh";
 import { subscribeToCPU } from "@/util/supabase/subscribe";
 import CpuCurrentItems from "./cpu-current-items";
 import CraftItemTotal from "./craft-item-total";
 import CraftItemHistory from "./craft-item-history";
 import { DateTime } from "luxon";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 import { toast } from "sonner"
 import { mcAuth } from "@/util/supabase/auth";
 import { toggleSaveCraft } from "@/util/supabase/update";

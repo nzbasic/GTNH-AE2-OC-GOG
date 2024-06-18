@@ -5,7 +5,7 @@ import { useLocalStorage } from "usehooks-ts"
 import React from "react";
 import { arrayMoveImmutable } from 'array-move';
 import SortableList, { SortableItem } from "react-easy-sort";
-import { Favourite } from "./favourite-chart";
+import { Favourite } from "../chart/favourite-chart";
 import { createClient } from "@/util/supabase/client";
 import { fetchItems } from "@/util/supabase/fetch";
 import { FlatJoinedItemRow } from "@/types/supabase";

@@ -1,5 +1,5 @@
 import { fetchCPUs, fetchCraft, fetchSavedCrafts } from "@/util/supabase/fetch"
-import ActiveCPUItems from "@/components/cpu-items"
+import ActiveCPUItems from "@/components/cpu/cpu-items"
 import { createAdminClient } from "@/util/supabase/service_worker"
 import { DateTime } from "luxon"
 import { getItemHistoryCached, getItemHistoryFinishedCached, getItemHistoryLongCached } from "@/util/cache"

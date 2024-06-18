@@ -1,4 +1,4 @@
-import Card from "./card";
+import Card from "../card";
 import cn from 'classnames';
 import { toAEUnit } from "@/util/unit";
 import { ParsedCPURow } from "@/types/supabase";

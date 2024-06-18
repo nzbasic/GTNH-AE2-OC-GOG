@@ -5,7 +5,7 @@ import { fetchItem } from "@/util/supabase/fetch";
 import { toAEUnit } from "@/util/unit";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Refresh from "./refresh";
+import Refresh from "../refresh";
 import { RiDeleteBinLine, RiDraggable } from "@remixicon/react";
 import { SortableKnob } from "react-easy-sort";
 import MultiLineChart from "./multi-chart";

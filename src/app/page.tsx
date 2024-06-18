@@ -1,15 +1,15 @@
 import React from "react";
 import dynamic from 'next/dynamic'
-import CraftingStatus from "@/components/crafting-status";
-import Stats from "@/components/stats";
-import SavedCraftsTable from "@/components/saved-crafts";
+import CraftingStatus from "@/components/stats/crafting-status";
+import Stats from "@/components/stats/stats";
+import SavedCraftsTable from "@/components/stats/saved-crafts";
 import { getCpusCached, getHomeCached } from "@/util/cache";
 
-const DynamicFavourites = dynamic(() => import('@/components/favourites'), {
+const DynamicFavourites = dynamic(() => import('@/components/stats/favourites'), {
     ssr: false,
 })
 
-const DynamicDualItemsTable = dynamic(() => import('@/components/dual-items-table'), {
+const DynamicDualItemsTable = dynamic(() => import('@/components/stats/dual-items-table'), {
     ssr: false,
 })
 

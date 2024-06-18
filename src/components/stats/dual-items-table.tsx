@@ -5,7 +5,7 @@ import ItemsTable from "./items"
 import { useState } from "react"
 import { fetchLatestType } from "@/util/supabase/fetch"
 import { createClient } from "@/util/supabase/client"
-import Refresh from "./refresh"
+import Refresh from "../refresh"
 
 type Props = {
     initials: {

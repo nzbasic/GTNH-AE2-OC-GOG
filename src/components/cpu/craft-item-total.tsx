@@ -2,7 +2,7 @@
 
 import { ReducedItemHistoryPoint } from "@/types/supabase"
 import React from "react"
-import { TreemapWithParentSize } from "./treemap"
+import { TreemapWithParentSize } from "../chart/treemap"
 
 type Props = {
     data: Record<string, ReducedItemHistoryPoint[]>

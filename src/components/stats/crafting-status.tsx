@@ -2,11 +2,11 @@
 
 import { ParsedCPURow } from "@/types/supabase";
 import React, { useState } from "react";
-import CPU from "./cpu";
+import CPU from "../cpu/cpu";
 import Link from "next/link";
 import { fetchCPUs } from "@/util/supabase/fetch";
 import { createClient } from "@/util/supabase/client";
-import Refresh from "./refresh";
+import Refresh from "../refresh";
 
 function sortCpus(cpus: ParsedCPURow[]) {
     const sorted = cpus.toSorted((a, b) => {
