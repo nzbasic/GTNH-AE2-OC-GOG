@@ -28,12 +28,7 @@ export default async function CPU({ params: { id } }: Props) {
 
     const isActive = !!cpu.final_output;
 
-    let itemHistory: string
-    if (isActive) {
-        itemHistory = await getItemHistoryCached(craft.id);
-    } else if (craft.save) {
-        itemHistory = await getItemHistoryFinishedCached(craft.id);
-    }
+    const itemHistory = isActive ? await getItemHistoryCached(craft.id) : craft.save ? await getItemHistoryFinishedCached(craft.id) : null;
 
     const duration = DateTime.fromISO(craft.ended_at).diff(DateTime.fromISO(craft.created_at), ['hours', 'minutes', 'seconds']).toHuman({ maximumFractionDigits: 0 });
 
