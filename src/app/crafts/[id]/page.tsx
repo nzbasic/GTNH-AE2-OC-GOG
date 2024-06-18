@@ -1,8 +1,9 @@
-import { fetchCraft } from "@/util/supabase/fetch"
+import { fetchCPUs, fetchCraft, fetchSavedCrafts } from "@/util/supabase/fetch"
 import ActiveCPUItems from "@/components/cpu-items"
 import { createAdminClient } from "@/util/supabase/service_worker"
 import { DateTime } from "luxon"
-import { getItemHistoryCached, getItemHistoryFinishedCached } from "@/util/cache"
+import { getItemHistoryCached, getItemHistoryFinishedCached, getItemHistoryLongCached } from "@/util/cache"
+import { CraftRow } from "@/types/supabase"
 
 type Props = {
     params: {
@@ -13,6 +14,44 @@ type Props = {
 export const maxDuration = 60;
 export const revalidate = false;
 export const dynamic = "force-static";
+
+export async function generateStaticParams() {
+    const toCache: { id: number }[] = []
+
+    const client = await createAdminClient();
+
+    const cpus = await fetchCPUs(client)
+    for (const cpu of cpus) {
+        if (cpu.craft_id) {
+            toCache.push({ id: cpu.craft_id });
+        }
+    }
+
+    const saved = await fetchSavedCrafts(client);
+    for (const craft of saved) {
+        if (!toCache.find(c => c.id === craft.id)) {
+            toCache.push({ id: craft.id });
+        }
+    }
+
+    return toCache;
+}
+
+async function getItems(isActive: boolean, craft: CraftRow) {
+    if (isActive) {
+        const hours = DateTime.fromISO(craft.ended_at).diff(DateTime.fromISO(craft.created_at), ['hours']).hours;
+
+        if (hours > 6) {
+            return getItemHistoryLongCached(craft.id);
+        } else {
+            return getItemHistoryCached(craft.id);
+        }
+    } else if (craft.save) {
+        return getItemHistoryFinishedCached(craft.id);
+    } else {
+        return null;
+    }
+}
 
 export default async function CPU({ params: { id } }: Props) {
     const client = await createAdminClient()
@@ -28,7 +67,7 @@ export default async function CPU({ params: { id } }: Props) {
 
     const isActive = !!cpu.final_output;
 
-    const itemHistory = isActive ? await getItemHistoryCached(craft.id) : craft.save ? await getItemHistoryFinishedCached(craft.id) : null;
+    const itemHistory = await getItems(isActive, craft)
 
     const duration = DateTime.fromISO(craft.ended_at).diff(DateTime.fromISO(craft.created_at), ['hours', 'minutes', 'seconds']).toHuman({ maximumFractionDigits: 0 });
 

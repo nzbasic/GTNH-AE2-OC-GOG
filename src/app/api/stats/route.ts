@@ -2,8 +2,9 @@
 import { OCStats } from "@/types/oc";
 import { CPUItem } from "@/types/supabase";
 import { createAdminClient } from "@/util/supabase/service_worker";
-import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+
+export const maxDuration = 60;
 
 function mapStringToItems(string: string): CPUItem[] {
     if (!string) return [];

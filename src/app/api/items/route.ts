@@ -2,6 +2,8 @@ import { OCItems } from "@/types/oc";
 import { createAdminClient } from "@/util/supabase/service_worker";
 import { NextRequest, NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 // POST /api/items
 // Called by OC to track items
 export async function POST(req: NextRequest, res: NextResponse) {

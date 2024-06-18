@@ -53,6 +53,18 @@ const getItemHistoryFinished = unstable_cache(async (id: number) => {
     return compress(items);
 }, ['craft-items-finished'], { revalidate: false });
 
+// third cache for long running items, longer revalidation
+const getItemHistoryLong = unstable_cache(async (id: number) => {
+    const client = await createAdminClient();
+    const items = await fetchCraftItemHistory(client, id.toString());
+
+    if (!items) return "";
+
+    if (Object.entries(items).length == 0) return ""
+
+    return compress(items);
+}, ['craft-items-long'], { revalidate: false, tags: ['long-active-crafts'] });
+
 export async function getCpusCached() {
     return decompress(await getCpus());
 }
@@ -71,4 +83,8 @@ export async function getItemHistoryCached(id: number) {
 
 export async function getItemHistoryFinishedCached(id: number) {
     return await getItemHistoryFinished(id);
+}
+
+export async function getItemHistoryLongCached(id: number) {
+    return await getItemHistoryLong(id);
 }
