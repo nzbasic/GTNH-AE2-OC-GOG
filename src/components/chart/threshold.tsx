@@ -223,13 +223,15 @@ const ThresholdWithTooltip = withTooltip<ThresholdProps, TooltipData>(({
                         key={Math.random()}
                         top={(tooltipTop ?? 0) - 12}
                         left={(tooltipLeft ?? 0) + 12}
-                        className="bg-card border rounded-sm shadow-sm p-2"
+                        className="!bg-card border !rounded-sm !shadow-sm !p-0 min-w-32"
                     >
-                        <div className="flex flex-col items-end">
-                            <p>{DateTime.fromMillis(date(tooltipData)).toFormat('hh:mm')}</p>
-                            <p className="text-red-500">-{toPowerUnit(euOut(tooltipData))} EU/t</p>
-                            <p className="text-green-500">+{toPowerUnit(euIn(tooltipData))} EU/t</p>
-                            <p>{toPowerUnit(tooltipData.euDiff)} EU/t</p>
+                        <div className="flex flex-col divide-y">
+                            <p className="p-3 dark:text-white">{DateTime.fromMillis(date(tooltipData)).toFormat('dd/MM hh:mm')}</p>
+                            <div className="flex flex-col gap-2 p-3">
+                                <p className="text-red-500">-{toPowerUnit(euOut(tooltipData))} EU/t</p>
+                                <p className="text-green-500">+{toPowerUnit(euIn(tooltipData))} EU/t</p>
+                                <p className="dark:text-white">{toPowerUnit(tooltipData.euDiff)} EU/t</p>
+                            </div>
                         </div>
                     </TooltipWithBounds>
                 </div>

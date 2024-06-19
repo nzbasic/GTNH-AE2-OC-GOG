@@ -48,7 +48,8 @@ export default function RootLayout({
                         </div>
 
                         <footer className="flex flex-col gap-4">
-                            <a href="https://nzbasic.com">by nzbasic</a>
+                            <a href="https://github.com/nzbasic" className="hover:underline">by nzbasic</a>
+                            <a href="https://github.com/nzbasic/GTNH-AE2-OC-GOG" className="hover:underline">View on GitHub</a>
                             <p className="font-bold py-4">NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
                         </footer>
 

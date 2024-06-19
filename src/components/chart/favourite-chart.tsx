@@ -63,7 +63,9 @@ export const Favourite = React.forwardRef<HTMLDivElement, Props>(function Favour
                 </div>
             </div>
 
-            <MultiLineChart data={data} names={[name]} size="card" />
+            <div className="bg-card border rounded-sm shadow-sm w-full h-28">
+                <MultiLineChart data={data} names={[name]} size="card" lineOnly={true} />
+            </div>
         </div>
     );
 })

@@ -1,7 +1,7 @@
 const ae2Units = ['k', 'M', 'G', 'T', 'P', 'E']
 const size = 1e3;
 
-export function toAEUnit(number?: number | undefined) {
+export function toAEUnit(number?: number | undefined, decimals = 2) {
     if (number === undefined) return 'N/A';
 
     let unit = '';
@@ -15,7 +15,7 @@ export function toAEUnit(number?: number | undefined) {
     }
 
     if (unit) {
-        return `${value.toFixed(2)}${unit}`;
+        return `${value.toFixed(decimals)}${unit}`;
     }
 
     return `${value}${unit}`;

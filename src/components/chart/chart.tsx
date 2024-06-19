@@ -1,6 +1,7 @@
 import { toAEUnit } from "@/util/unit";
 import { LineChart } from "@tremor/react";
 import cn from 'classnames';
+import { ChartWithParentSize } from "./xychart";
 
 type Props<T> = {
     data: T[];
@@ -8,7 +9,7 @@ type Props<T> = {
     size: 'full' | 'card';
 }
 
-export default function LineChartHero<T>({ data, name, size }: Props<T>) {
+export default function LineChartHero<T extends object>({ data, name, size }: Props<T>) {
     const min = Math.min(...data.map((d: any) => d[name]));
     const max = Math.max(...data.map((d: any) => d[name]));
 
@@ -19,15 +20,15 @@ export default function LineChartHero<T>({ data, name, size }: Props<T>) {
         <LineChart
             className={cn('bg-card shadow-sm', {
                 'h-28 border rounded-sm': size === 'card',
-                'h-96 border rounded p-2 py-4': size === 'full',
+                // 'h-96 border rounded p-2 py-4': size === 'full',
             })}
             data={data}
             index="date"
             categories={[name]}
             colors={['indigo']}
             valueFormatter={toAEUnit}
-            showYAxis={size === 'full'}
-            showXAxis={size === 'full'}
+            showYAxis={false}
+            showXAxis={false}
             showGridLines={true}
             showLegend={false}
             minValue={minWithMargin}

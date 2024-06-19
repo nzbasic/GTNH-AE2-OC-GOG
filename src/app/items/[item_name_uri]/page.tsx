@@ -56,7 +56,7 @@ export default async function Item({ params: { item_name_uri } }: Props) {
         <div className="flex flex-col gap-4">
             <h2 className="text-lg font-medium">{formatName(item_name)}</h2>
 
-            <div className="grid lg:grid-cols-3 gap-y-2">
+            <div className="grid lg:grid-cols-[auto_auto_auto_1fr] gap-x-6 gap-y-2">
                 <div>
                     <p className="text-sm">Current ({toTimeString(now.created_at)})</p>
                     <p>{toAEUnit(now?.quantity)}</p>

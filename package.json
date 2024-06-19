@@ -40,6 +40,7 @@
     "@visx/text": "^3.3.0",
     "@visx/threshold": "^3.5.0",
     "@visx/tooltip": "^3.3.0",
+    "@visx/xychart": "^3.11.0",
     "apexcharts": "^3.49.1",
     "array-move": "^4.0.0",
     "class-variance-authority": "^0.7.0",

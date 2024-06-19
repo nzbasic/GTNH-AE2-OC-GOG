@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select"
 import MultiLineChart from "./multi-chart";
 import { subscribeToItem } from "@/util/supabase/subscribe";
+import { cn } from "@/lib/utils";
 
 type Props = {
     initialData: FlatJoinedItemRow[];
@@ -21,6 +22,7 @@ type Props = {
 }
 
 export default function AutoItemChart({ initialData, name, size }: Props) {
+    const [scaleType, setScaleType] = useState("log");
     const [data, setData] = useState(initialData);
     const [period, setPeriod] = useState("all");
 
@@ -59,19 +61,33 @@ export default function AutoItemChart({ initialData, name, size }: Props) {
 
     return (
         <div className="flex flex-col gap-2">
-            <Select value={period} onValueChange={(v) => setPeriod(v)}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Theme" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Time</SelectItem>
-                    <SelectItem value="week">Past Week</SelectItem>
-                    <SelectItem value="day">Past Day</SelectItem>
-                    <SelectItem value="hour">Past Hour</SelectItem>
-                </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+                <Select value={period} onValueChange={(v) => setPeriod(v)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Time</SelectItem>
+                        <SelectItem value="week">Past Week</SelectItem>
+                        <SelectItem value="day">Past Day</SelectItem>
+                        <SelectItem value="hour">Past Hour</SelectItem>
+                    </SelectContent>
+                </Select>
 
-            <MultiLineChart data={memoData} names={[name]} size={size} />
+                <Select value={scaleType} onValueChange={(v) => setScaleType(v)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Y Scale" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="log">Log</SelectItem>
+                        <SelectItem value="linear">Linear</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className={cn({ 'bg-card rounded-sm shadow-sm border md:p-4': size === 'full' })}>
+                <MultiLineChart data={memoData} names={[name]} size={size} scaleType={scaleType} />
+            </div>
         </div>
     )
 }
