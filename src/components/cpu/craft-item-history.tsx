@@ -1,5 +1,4 @@
 import { ReducedItemHistoryPoint } from "@/types/supabase"
-import { DateTime } from "luxon";
 import { ScheduleWithParentSize } from "../chart/schedule";
 import React from "react";
 
@@ -62,16 +61,18 @@ export default function CraftItemHistory({ data }: Props) {
             return acc;
         }, {} as Record<string, typeof initialTransform>);
 
+        // rewrite the above loop to find the actual time spent on each item
         const reduced: Record<string, number> = {}
         for (const item_id in data) {
             const history_points = data[item_id]
             let total_time = 0;
-
-            // add 10s to whenever the value is > 0
-            for (const point of history_points) {
-                if (point.active_count > 0 || point.pending_count > 0) {
-                    total_time += 10;
+            let last_point = history_points[0];
+            for (let i = 1; i < history_points.length; i++) {
+                const point = history_points[i];
+                if (last_point.active_count > 0 || last_point.pending_count > 0) {
+                    total_time += point.created_at - last_point.created_at;
                 }
+                last_point = point;
             }
             reduced[item_id] = total_time;
         }

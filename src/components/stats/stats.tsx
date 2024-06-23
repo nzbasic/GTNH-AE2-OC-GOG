@@ -18,7 +18,7 @@ type Props = {
 }
 
 export default function Stats({ initialData }: Props) {
-    const [period, setPeriod] = useState('60')
+    // const [period, setPeriod] = useState('60')
     const [data, setData] = useState<Stats[]>(initialData)
     const [refreshing, setRefreshing] = useState(false)
 
@@ -30,15 +30,15 @@ export default function Stats({ initialData }: Props) {
         setRefreshing(false)
     }
 
-    const filtered = useMemo(() => {
-        return data.filter((d) => DateTime.fromISO(d.created_at).toMillis() > DateTime.now().minus({ minutes: Number(period) }).toMillis())
-    }, [data, period])
+    // const filtered = useMemo(() => {
+    //     return data.filter((d) => DateTime.fromISO(d.created_at).toMillis() > DateTime.now().minus({ minutes: Number(period) }).toMillis())
+    // }, [data, period])
 
     const { avg, peak, low, status } = useMemo(() => {
         const avg = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const peak = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const low = { in: Infinity, out: Infinity, diff: Infinity, total: Infinity, mspt: Infinity, tps: Infinity }
-        const current = filtered[filtered.length - 1]
+        const current = data[data.length - 1]
 
         const status: Record<string, CardVariant> = { in: 'neutral', out: 'neutral', diff: 'neutral', total: 'neutral', mspt: 'neutral', tps: 'neutral' }
 
@@ -46,7 +46,7 @@ export default function Stats({ initialData }: Props) {
 
         current.tps = Number(current.tps.toFixed(1));
 
-        filtered.forEach((d) => {
+        data.forEach((d) => {
             avg.in += d.euIn;
             avg.out += d.euOut;
             avg.diff += d.euDiff;
@@ -69,7 +69,7 @@ export default function Stats({ initialData }: Props) {
             low.tps = Math.min(low.tps, d.tps);
         })
 
-        const length = filtered.length || 1;
+        const length = data.length || 1;
         avg.in /= length;
         avg.out /= length;
         avg.diff /= length;
@@ -85,7 +85,7 @@ export default function Stats({ initialData }: Props) {
         if (avg.mspt > 40) status.mspt = 'warning';
 
         return { avg, peak, low, status }
-    }, [filtered, period]);
+    }, [data]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -98,7 +98,7 @@ export default function Stats({ initialData }: Props) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                <Select value={period} onValueChange={(v) => setPeriod(v)}>
+                {/* <Select value={period} onValueChange={(v) => setPeriod(v)}>
                     <SelectTrigger className="w-[180px] col-span-full">
                         <SelectValue placeholder="Theme" />
                     </SelectTrigger>
@@ -108,7 +108,7 @@ export default function Stats({ initialData }: Props) {
                         <SelectItem value="15">15 Minutes</SelectItem>
                         <SelectItem value="5">5 Minutes</SelectItem>
                     </SelectContent>
-                </Select>
+                </Select> */}
                 {/* <StatCard
                     className="order-2 lg:order-1"
                     data={filtered}
@@ -122,7 +122,7 @@ export default function Stats({ initialData }: Props) {
 
                 <StatCard
                     className="order-1 lg:order-2"
-                    data={filtered}
+                    data={data}
                     title="EU Total"
                     name="eu"
                     avg={avg.total}
@@ -144,7 +144,7 @@ export default function Stats({ initialData }: Props) {
 
                 <StatCard
                     className="order-5 lg:order-4"
-                    data={filtered}
+                    data={data}
                     title="MSPT"
                     name="mspt"
                     avg={avg.mspt}
@@ -156,7 +156,7 @@ export default function Stats({ initialData }: Props) {
 
                 <StatCard
                     className="order-4 lg:order-5"
-                    data={filtered}
+                    data={data}
                     title="EU/t Difference"
                     name="euDiff"
                     avg={avg.diff}
@@ -167,7 +167,7 @@ export default function Stats({ initialData }: Props) {
 
                 <StatCard
                     className="order-6 lg:order-6"
-                    data={filtered}
+                    data={data}
                     title="TPS"
                     name="tps"
                     avg={avg.tps}
@@ -180,13 +180,14 @@ export default function Stats({ initialData }: Props) {
 
             <div className="flex flex-col">
                 <h2 className="text-sm font-medium pb-1 flex gap-2 items-center">EU/t In/Out</h2>
-                <div className="lg:hidden">
+                <div className="lg:hidden w-full h-28 rounded-sm border shadow-sm bg-card">
                     <MultiLineChart
                         data={data}
                         names={["euIn", "euOut", "euDiff"]}
                         colors={["green", "red", "indigo"]}
                         size="card"
                         valueFormatter={(n) => toPowerUnit(n) + "/t"}
+                        lineOnly={true}
                     />
                 </div>
                 <div className="hidden lg:block w-full h-72 bg-card rounded-sm shadow-sm border">
