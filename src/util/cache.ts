@@ -38,6 +38,7 @@ const getItemHistory = unstable_cache(async (id: number) => {
     const client = await createAdminClient();
     const items = await fetchCraftItemHistory(client, id.toString());
 
+    if (!items) return "";
     if (Object.entries(items).length == 0) return ""
 
     return compress(items);
@@ -48,6 +49,7 @@ const getItemHistoryFinished = unstable_cache(async (id: number) => {
     const client = await createAdminClient();
     const items = await fetchCraftItemHistory(client, id.toString());
 
+    if (!items) return "";
     if (Object.entries(items).length == 0) return ""
 
     return compress(items);
@@ -59,11 +61,17 @@ const getItemHistoryLong = unstable_cache(async (id: number) => {
     const items = await fetchCraftItemHistory(client, id.toString());
 
     if (!items) return "";
-
     if (Object.entries(items).length == 0) return ""
 
     return compress(items);
 }, ['craft-items-long'], { revalidate: false, tags: ['long-active-crafts'] });
+
+const getFullStats = unstable_cache(async () => {
+    const client = await createAdminClient();
+    const stats = await fetchStats(client, undefined, 50000);
+
+    return compress(stats);
+}, ['full-stats'], { revalidate: false, tags: ['stats'] });
 
 export async function getCpusCached() {
     return decompress(await getCpus());
@@ -87,4 +95,8 @@ export async function getItemHistoryFinishedCached(id: number) {
 
 export async function getItemHistoryLongCached(id: number) {
     return await getItemHistoryLong(id);
+}
+
+export async function getFullStatsCached() {
+    return decompress(await getFullStats());
 }
