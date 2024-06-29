@@ -69,8 +69,8 @@ export async function fetchCPUs(client: SupabaseClient) {
     return cpus;
 }
 
-export async function fetchStats(client: SupabaseClient, after = DateTime.now().minus({ hours: 1 }).toISO()) {
-    const { data, error } = await client.from("stats").select("*, inserts!inner(*)").gt("inserts.created_at", after).order("insert_id", { ascending: false })
+export async function fetchStats(client: SupabaseClient, after = DateTime.now().minus({ hours: 1 }).toISO(), limit = 100) {
+    const { data, error } = await client.from("stats").select("*, inserts!inner(*)").limit(limit).order("insert_id", { ascending: false })
     if (!data) return;
 
     const mapped = (data ?? []).map(mapJoinedItem) as unknown as Stats[];
