@@ -33,7 +33,7 @@ export default async function Home() {
     const items = network?.items ?? [];
     const fluids = network?.fluids ?? [];
 
-    if (!items || !items.length || !stats) {
+    if (!items || !stats) {
         if (!items) console.error('items is missing')
         if (!stats) console.error('stats is missing')
         console.error('there was a problem')
