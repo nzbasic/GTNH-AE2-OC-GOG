@@ -17,7 +17,7 @@ const DynamicOrderItem = dynamic(() => import('@/components/order-item'), {
     ssr: false,
 })
 
-export const revalidate = false
+export const revalidate = 60;
 export const maxDuration = 60
 
 export default async function Home() {

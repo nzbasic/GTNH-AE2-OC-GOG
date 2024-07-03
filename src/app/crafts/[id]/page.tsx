@@ -12,8 +12,8 @@ type Props = {
 }
 
 export const maxDuration = 60;
-export const revalidate = false;
-export const dynamic = "force-static";
+export const revalidate = 1800;
+// export const dynamic = "force-static";
 
 export async function generateStaticParams() {
     const toCache: { id: string }[] = []
