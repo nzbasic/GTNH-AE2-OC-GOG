@@ -17,13 +17,13 @@ const getHome = unstable_cache(async () => {
     ]);
 
     return compress(all);
-}, ['home'], { revalidate: false, tags: ['stats'] });
+}, ['home'], { revalidate: 60, tags: ['stats'] });
 
 const getCpus = unstable_cache(async () => {
     const client = await createAdminClient();
     const cpus = await fetchCPUs(client);
     return compress(cpus);
-}, ['cpus'], { revalidate: false, tags: ['stats'] });
+}, ['cpus'], { revalidate: 60, tags: ['stats'] });
 
 const getItems = unstable_cache(async (item_name: string) => {
     const client = await createAdminClient();
@@ -32,7 +32,7 @@ const getItems = unstable_cache(async (item_name: string) => {
     if (!data) return "";
 
     return compress(data);
-}, ['items'], { revalidate: false, tags: ['stats'] });
+}, ['items'], { revalidate: 60, tags: ['stats'] });
 
 const getItemHistory = unstable_cache(async (id: number) => {
     const client = await createAdminClient();
@@ -42,7 +42,7 @@ const getItemHistory = unstable_cache(async (id: number) => {
     if (Object.entries(items).length == 0) return ""
 
     return compress(items);
-}, ['craft-items'], { revalidate: false, tags: ['active-crafts'] });
+}, ['craft-items'], { revalidate: 300, tags: ['active-crafts'] });
 
 // second cache for finished items, doesn't revalidate
 const getItemHistoryFinished = unstable_cache(async (id: number) => {
@@ -64,14 +64,14 @@ const getItemHistoryLong = unstable_cache(async (id: number) => {
     if (Object.entries(items).length == 0) return ""
 
     return compress(items);
-}, ['craft-items-long'], { revalidate: false, tags: ['long-active-crafts'] });
+}, ['craft-items-long'], { revalidate: 1200, tags: ['long-active-crafts'] });
 
 const getFullStats = unstable_cache(async () => {
     const client = await createAdminClient();
     const stats = await fetchStats(client, undefined, 50000);
 
     return compress(stats);
-}, ['full-stats'], { revalidate: false, tags: ['stats'] });
+}, ['full-stats'], { revalidate: 60, tags: ['stats'] });
 
 export async function getCpusCached() {
     return decompress(await getCpus());

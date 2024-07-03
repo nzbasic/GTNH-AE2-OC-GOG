@@ -6,6 +6,9 @@ import { revalidateTag } from "next/cache";
 export const maxDuration = 60
 
 export async function POST() {
+    // temporary
+    return new Response('not implemented', { status: 501 });
+
     revalidateTag("long-active-crafts")
 
     // sleep 1 second
