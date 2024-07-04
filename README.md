@@ -4,9 +4,14 @@ Tracks the status of your AE2 system in real time.
 - CPU crafting status
 - Item/fluid history
 
-[Credit to Niels for most of the OC code](https://github.com/Niels1006/OC-AE2-integration)
+[Credit to Niels for some of the AE2 related OC code](https://github.com/Niels1006/OC-AE2-integration)
 
 [Credit to DylanTaylor1 for the setup script](https://github.com/DylanTaylor1/GTNH-Stocking)
+
+
+## Readme Disclaimer
+
+I haven't tested setting this up a second time, you will probably encounter issues following the setup, sorry
 
 ## OC Requirements:
 
