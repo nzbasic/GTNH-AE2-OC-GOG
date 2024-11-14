@@ -57,15 +57,14 @@ end
 function getItemsInNetwork()
     local filter = getFilter()
     local items = {}
-    local all = ME.getItemsInNetwork()
-
-    for _, meV in pairs(all) do
-       for _, filterV in pairs(filter) do
-            if meV.label == filterV then
-                items[filterV] = (items[filterV] or 0) + meV.size
-            end
+    for _, item in pairs(filter) do
+        match = ME.getItemsInNetwork({name=item.name, damage=item.damage})[1]
+        if match ~= nil then
+            items[item.label] = match.size
+        else
+            print("No match for " .. item.label)
+            items[item.label] = 0
         end
     end
-
     return items
 end

@@ -5,16 +5,16 @@ local args = {...}
 local branch
 local repo
 local scripts = {
-    'Run.lua',
-    'env.example.lua',
-    'src/Scan.lua',
-    'src/AE2.lua',
-    'src/Utility.lua',
-    'src/Network.lua',
-    'src/Queue.lua',
-    'src/Machines.lua',
-    'src/TPS.lua',
-    'lib/json.lua',
+    'main/Run.lua',
+    'main/env.example.lua',
+    'main/src/Scan.lua',
+    'main/src/AE2.lua',
+    'main/src/Utility.lua',
+    'main/src/Network.lua',
+    'main/src/Queue.lua',
+    'main/src/Machines.lua',
+    'main/src/TPS.lua',
+    'main/lib/json.lua',
 }
 
 -- BRANCH
@@ -28,7 +28,7 @@ end
 if #args >= 2 then
     repo = args[2]
 else
-    repo = 'https://raw.githubusercontent.com/nzbasic/GTNH-AE2-OC-GOG/'
+    repo = 'https://raw.githubusercontent.com/nzbasic/GTNH-AE2-OC-GOG/blob/'
 end
 
 local folder = "oc"

@@ -9,13 +9,14 @@ import { toPowerUnit } from "@/util/unit";
 import MultiLineChart from "../chart/multi-chart";
 import { CardVariant } from "../card";
 import StatCard from "../stats/stat-card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DateTime } from "luxon";
-import Threshold, { ThresholdWithParentSize } from '../chart/threshold'
+import { ThresholdWithParentSize } from "../chart/threshold";
 
 type Props = {
     initialData: Stats[]
 }
+
+const powerfailAvgDur = 5;
 
 export default function Stats({ initialData }: Props) {
     // const [period, setPeriod] = useState('60')
@@ -34,7 +35,7 @@ export default function Stats({ initialData }: Props) {
     //     return data.filter((d) => DateTime.fromISO(d.created_at).toMillis() > DateTime.now().minus({ minutes: Number(period) }).toMillis())
     // }, [data, period])
 
-    const { avg, peak, low, status } = useMemo(() => {
+    const { avg, peak, low, status, recentAvgEuDiff } = useMemo(() => {
         const avg = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const peak = { in: 0, out: 0, diff: 0, total: 0, mspt: 0, tps: 0 }
         const low = { in: Infinity, out: Infinity, diff: Infinity, total: Infinity, mspt: Infinity, tps: Infinity }
@@ -84,8 +85,35 @@ export default function Stats({ initialData }: Props) {
         if (current.mspt > 50 || avg.mspt > 50) status.mspt = 'danger';
         if (avg.mspt > 40) status.mspt = 'warning';
 
-        return { avg, peak, low, status }
-    }, [data]);
+        let recentAvgEuDiff = 0;
+        let n = 0;
+        while (
+          DateTime.fromISO(data[data.length - n - 1].created_at).toMillis() >
+          DateTime.now().minus({ minutes: 5 }).toMillis() &&
+          n < data.length - 1
+        ) {
+          recentAvgEuDiff += data[data.length - n - 1].euDiff;
+          n++;
+        }
+        recentAvgEuDiff /= n;
+    
+        return { avg, peak, low, status, recentAvgEuDiff };
+      }, [data]);
+    
+
+    let powerfailStats = (<p className="text-right font-mono">Powerfail Stats not available</p>);
+    if(recentAvgEuDiff){
+        let currentEu = data[data.length - 1].eu;
+        let powerfailStr = (recentAvgEuDiff < 0)
+            ? DateTime.now().plus({ seconds: Number(currentEu) / (-recentAvgEuDiff * avg.tps) }).toRelative()
+            : "Power is positive";
+        powerfailStats = (<>  
+                <p className="text-left font-mono">Currently {recentAvgEuDiff>0 ? "charging" : "draining"} at {toPowerUnit(recentAvgEuDiff*avg.tps*86400)} EU/day</p>
+                <p className="text-left font-mono">Powerfail: {powerfailStr}</p>
+            </>)
+    }
+
+
 
     return (
         <div className="flex flex-col gap-4">
@@ -193,6 +221,10 @@ export default function Stats({ initialData }: Props) {
                 <div className="hidden lg:block w-full h-72 bg-card rounded-sm shadow-sm border">
                     <ThresholdWithParentSize data={data} />
                 </div>
+            </div>
+            <div className="flex flex-col w-full rounded-sm border shadow-sm bg-card p-2">
+                <h2 className="">Based on the last {powerfailAvgDur} minutes: </h2>
+                {powerfailStats}
             </div>
         </div>
     )

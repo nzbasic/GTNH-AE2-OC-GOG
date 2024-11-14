@@ -5,11 +5,11 @@ local buffer = component.inventory_controller
 require("src.Utility")
 
 function getFilter()
-  	local filter = {}
+    local filter = {}
     for i=1,243 do
         local item = buffer.getStackInSlot(sides.up, i)
         if item ~= nil then
-            filter[i] = item.label
+            filter[i] = item
         else
             break
         end
@@ -18,7 +18,7 @@ function getFilter()
 end
 
 function getAuthNames()
-	local names = {}
+    local names = {}
     for i=1,27 do
         local item = buffer.getStackInSlot(sides.south, i)
         if item ~= nil then

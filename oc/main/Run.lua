@@ -7,10 +7,10 @@ require("src.Machines")
 require("src.TPS")
 
 function sendStats()
-	sendToServer({ network = getNetworkStats(), lsc = getLSC(), tps = getTPS() }, "stats")
+    sendToServer({ network = getNetworkStats(), lsc = getLSC(), tps = getTPS() }, "stats")
     -- sendToServer(getAuthNames(), "auth")
     -- sendToServer({ machines = machines, names = machineNames }, "machines")
-   	sendToServer(getItemsInNetwork(), "items")
+       sendToServer(getItemsInNetwork(), "items")
 end
 
 local event = require("event")

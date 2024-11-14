@@ -24,10 +24,15 @@ I haven't tested setting this up a second time, you will probably encounter issu
 - Inventory Controller Upgrade
 - Keyboard
 - Internet Card
+- TPS Card
 - EEPROM (Lua BIOS)
 - OpenOS Floppy Disk
 - 2 Adapter (maybe 1 is enough)
 - Chest (Compressed chest is best)
+
+## AE Requirements:
+
+All crafting CPUs must have a Crafting Monitor, or their craft information cannot be read.
 
 ## Dev Setup
 
@@ -35,6 +40,10 @@ I haven't tested setting this up a second time, you will probably encounter issu
 1. [Create a new project on Supabase](https://database.new)
 2. Copy the contents of `postgres.sql` into the SQL editor
 3. Note the env variables: url, public key, service worker key
+4. Go to `Database > Extensions` and enable `pg_cron` for scheduling cleaning tasks
+5. Go to Database SQL Editor and copy/execute the contents of `supabase/setup_clean_job.sql` into the editor. This will create cron jobs to clean out data according to a data retention policy (storing data older than one hour at less-frequent intervals).
+6. Go to Project Settings > API and increase "Max Rows". Using the default data retention policy in `setup_clean_job.sql`, the default max of 1000 rows will only fetch about 14 hours of data. 5000 rows will fetch about one week of data. You can increase Max Rows or increase the data retention intervals, to increase how far back you can see.
+
 
 ### Web:
 1. `npm install` or `yarn install` or `pnpm install` or `bun install`
@@ -51,7 +60,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ### OC:
 
 1. Build the computer with specs above
-2. Run `wget https://raw.githubusercontent.com/nzbasic/GTNH-AE2-OC-GOG/main/setup.lua && setup`
+2. Run `wget https://raw.githubusercontent.com/nzbasic/GTNH-AE2-OC-GOG/main/oc/main/setup.lua && setup`
 3. Copy `env.example.lua` to `env.lua` and fill in the details
     - `serverUrl` is the url of
     - `secret` is the secret from the web server
